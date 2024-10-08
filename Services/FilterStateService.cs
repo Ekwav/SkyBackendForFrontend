@@ -55,19 +55,9 @@ public class FilterStateService
         try
         {
             State.PreviousMayor = mayorApi.MayorLastGet().ToLower();
-            var response = await mayorApi.MayorCurrentGetWithHttpInfoAsync();
-            try
-            {
-                State.CurrentMayor = JsonConvert.DeserializeObject<ModelCandidate>(response.Data.ToString()).Name.ToLower();
-            }
-            catch (System.Exception)
-            {
-                logger.LogInformation("Could not load current mayor " + response.Data.ToString());
-                throw;
-            }
-            State.NextMayor = (await mayorApi.MayorNextGetAsync())?.Name.ToLower();
-            logger.LogInformation("Current mayor is {current}", State.CurrentMayor);
+            State.NextMayor = (await mayorApi.MayorNextGetAsync())?.Name?.ToLower();
             UpdateCurrentPerks();
+            logger.LogInformation("Current mayor is {current}", State.CurrentMayor);
         }
         catch (Exception e)
         {
@@ -97,14 +87,17 @@ public class FilterStateService
         var restsharp = new RestClient("https://api.hypixel.net");
         var mayorResponse = restsharp.Execute(new RestRequest("/v2/resources/skyblock/election"));
         var mayors = JsonConvert.DeserializeObject<MayorResponse>(mayorResponse.Content);
-        if (mayors.success)
+        if (!mayors.success)
         {
-            var mayor = mayors.mayor.perks.Select(p => p.name).ToList();
-            State.CurrentPerks = new HashSet<string>(mayor)
+            Console.WriteLine("Could not load mayor perks");
+            return;
+        }
+        var mayor = mayors.mayor.perks.Select(p => p.name).ToList();
+        State.CurrentPerks = new HashSet<string>(mayor)
                 {
                     mayors.mayor.minister.perk.name
                 };
-        }
+        State.CurrentMayor = mayors.mayor.name.ToLower();
     }
 
     public void GetItemCategory(ItemCategory category)
