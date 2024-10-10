@@ -71,6 +71,7 @@ namespace Coflnet.Sky.Commands.Shared
             AdditionalFilters.Add<CleanCostDetailedFlipFilter>();
             AdditionalFilters.Add<LegacyReforgeDetailedFlipFilter>();
             AdditionalFilters.Add<HasUuuidFilter>();
+            AdditionalFilters.Add<UserPremiumTier>();
         }
 
         public FlipFilter(Dictionary<string, string> originalf, IPlayerInfo playerInfo)
