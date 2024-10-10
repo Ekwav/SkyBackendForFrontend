@@ -93,10 +93,10 @@ public class FilterStateService
             return;
         }
         var mayor = mayors.mayor.perks.Select(p => p.name).ToList();
-        State.CurrentPerks = new HashSet<string>(mayor)
-                {
-                    mayors.mayor.minister.perk.name
-                };
+        var minister = mayors.mayor?.minister?.perk?.name;
+        State.CurrentPerks = new HashSet<string>(mayor);
+        if (minister != null)
+            State.CurrentPerks.Add(minister);
         State.CurrentMayor = mayors.mayor.name.ToLower();
     }
 
