@@ -6,6 +6,7 @@ using System.Linq;
 using Coflnet.Sky.Core;
 using Coflnet.Sky.Filter;
 using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
 
 namespace Coflnet.Sky.Commands.Shared;
 public class ArmorSetDetailedFlipFilter : DetailedFlipFilter
@@ -15,10 +16,10 @@ public class ArmorSetDetailedFlipFilter : DetailedFlipFilter
         .Select(t => (object)t.Key.Replace("_LEGGINGS", "")).Append(ExtraArmorSets.Keys).ToArray();
 
 
-    private static Dictionary<string, string[]> ExtraArmorSets = new()
+    public static ReadOnlyDictionary<string, string[]> ExtraArmorSets = new(new Dictionary<string, string[]>
     {
         { "seymour", new []{ "OXFORD_SHOES", "SATIN_TROUSERS", "CASHMERE_JACKET", "VELVET_TOP_HAT" } },
-    };
+    });
     private static bool IsOnAh(KeyValuePair<string, int> t)
     {
         return !t.Key.Contains("_TERROR_") && !t.Key.Contains("_CRIMSON_") && !t.Key.Contains("_AURORA_") && !t.Key.Contains("_FERVOR_") && !t.Key.Contains("_HOLLOW_");
