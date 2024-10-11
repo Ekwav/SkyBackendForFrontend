@@ -405,7 +405,9 @@ namespace Coflnet.Sky.Commands.Shared
                     }
                     var matcher = isMatch[item.Key].Compile();
                     Addmatcher(item.Key, matcher);
-                    matcherLookup.TryAdd(cacheKey, new CacheEntry { matcher = matcher, lastUsed = DateTime.Now });
+                    if (!cacheKey.Contains(nameof(UserPremiumTier), StringComparison.CurrentCultureIgnoreCase)
+                        && !cacheKey.Contains(nameof(ListingSlotsLeft), StringComparison.CurrentCultureIgnoreCase))
+                        matcherLookup.TryAdd(cacheKey, new CacheEntry { matcher = matcher, lastUsed = DateTime.Now });
                 }
                 if (matcherLookup.Count > 10_000)
                 {
