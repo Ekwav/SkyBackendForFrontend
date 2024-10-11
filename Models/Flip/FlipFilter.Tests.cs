@@ -331,7 +331,7 @@ namespace Coflnet.Sky.Commands.Shared
             NBT.Instance = new NBTMock();
             var filters = new Dictionary<string, string>() { { "Stars", "5" }, { "Reforge", "Renowned" }, { "Rarity", "MYTHIC" } };
             var matcher = new ListEntry() { filter = filters, ItemTag = "abc" };
-            var result = matcher.GetExpression().Compile()(new FlipInstance()
+            var result = matcher.GetExpression(null).Compile()(new FlipInstance()
             {
                 Auction = new SaveAuction()
                 {

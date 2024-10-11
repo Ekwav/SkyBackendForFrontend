@@ -36,7 +36,7 @@ namespace Coflnet.Sky.Commands.Shared
             return (ItemTag == null || ItemTag == flip.Auction.Tag) && filterCache(flip);
         }
 
-        public Expression<Func<FlipInstance, bool>> GetExpression(IPlayerInfo playerInfo = null)
+        public Expression<Func<FlipInstance, bool>> GetExpression(IPlayerInfo playerInfo)
         {
             if (Disabled)
                 return f => false;
