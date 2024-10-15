@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Coflnet.Sky.Commands.Shared;
@@ -11,6 +12,7 @@ public class ConfigContainer
     public string OwnerId { get; set; }
     public int Price { get; set; }
     public Dictionary<int, SettingsDiffer.SettingsDiff> Diffs { get; set; } = new();
+    public DateTime LastUpdated { get; set; }
 }
 
 public class CreatedConfigs
