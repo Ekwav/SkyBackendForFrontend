@@ -13,7 +13,7 @@ public class ArmorSetDetailedFlipFilter : DetailedFlipFilter
 {
     public object[] Options => ItemDetails.Instance.TagLookup
         .Where(t => t.Key.EndsWith("_LEGGINGS") && IsOnAh(t))
-        .Select(t => (object)t.Key.Replace("_LEGGINGS", "")).Append(ExtraArmorSets.Keys).ToArray();
+        .Select(t => (object)t.Key.Replace("_LEGGINGS", "")).Concat(ExtraArmorSets.Keys).ToArray();
 
 
     public static ReadOnlyDictionary<string, string[]> ExtraArmorSets = new(new Dictionary<string, string[]>
