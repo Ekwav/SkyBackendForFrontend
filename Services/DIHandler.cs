@@ -194,6 +194,7 @@ namespace Coflnet.Sky.Commands.Shared
             services.AddSingleton<Kafka.KafkaCreator>();
             services.AddSingleton<IStateUpdateService, StateUpdateService>();
             services.AddSingleton<McAccountService>();
+            services.AddSingleton<MuseumService>();
             services.AddHostedService<ServicePorter>();
             services.AddHostedService<FilterLoader>();
             services.AddTransient<HypixelContext>(s => new HypixelContext());
