@@ -8,6 +8,8 @@ public class PerfectArmorTierTests
     [TestCase("PERFECT_HELMET_1", "1-10", true)]
     [TestCase("PERFECT_HELMET_1", ">2", false)]
     [TestCase("PERFECT_HELMET_11", ">2", true)]
+    [TestCase("KEVIN", "1-13", false)]
+    [TestCase("SO_KEVIN", "1", false)]
     public void Match(string tag, string selector, bool expected)
     {
         var filter = new PerfectArmorTierDetailedFlipFilter();
@@ -15,6 +17,6 @@ public class PerfectArmorTierTests
         {
             Tag = tag,
         };
-        Assert.That(expected, Is.EqualTo(filter.GetExpression(null,selector).Compile()(flip)));
+        Assert.That(expected, Is.EqualTo(filter.GetExpression(new FilterContext(new(), null),selector).Compile()(flip)));
     }
 }

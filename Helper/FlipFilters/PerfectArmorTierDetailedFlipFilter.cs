@@ -9,7 +9,7 @@ namespace Coflnet.Sky.Commands.Shared;
 
 public class PerfectArmorTierDetailedFlipFilter : NumberDetailedFlipFilter
 {
-    public object[] Options => new object[] { 1, 12 };
+    public object[] Options => new object[] { 1, 13 };
 
     public FilterType FilterType => FilterType.NUMERICAL | FilterType.LOWER | FilterType.RANGE;
 
@@ -20,7 +20,12 @@ public class PerfectArmorTierDetailedFlipFilter : NumberDetailedFlipFilter
 
     protected override Expression<Func<FlipInstance, double>> GetSelector(FilterContext filters)
     {
-        return f => double.Parse(f.Tag.Split("_", 5, StringSplitOptions.None).Last());
+        return f => GetVal(f);
+    }
+
+    private static double GetVal(FlipInstance f)
+    {
+        return double.TryParse(f.Tag.Split("_", 5, StringSplitOptions.None).Last(), out var val) ? val : 0;
     }
 
     private Expression<Func<FlipInstance, bool>> StartsWithPerfect()
