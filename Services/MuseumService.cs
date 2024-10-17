@@ -38,7 +38,7 @@ public class MuseumService
                 result.Add(item.Key, (price.Price / item.Value, price.AuctionId));
             }
         }
-        var best10 = result.OrderBy(i => i.Value.Item1).Take(10).ToDictionary(i => i.Key, i => i.Value);
+        var best10 = result.OrderBy(i => i.Value.Item1).Take(40).ToDictionary(i => i.Key, i => i.Value);
         var ids = best10.Select(i => i.Value.auctionid).ToList();
         using (var db = new HypixelContext())
         {
