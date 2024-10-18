@@ -25,7 +25,7 @@ public class PerfectArmorTierDetailedFlipFilter : NumberDetailedFlipFilter
 
     private static double GetVal(FlipInstance f)
     {
-        return double.TryParse(f.Tag.Split("_", 5, StringSplitOptions.None).Last(), out var val) ? val : 0;
+        return f.Tag != null && double.TryParse(f.Tag.Split("_", 5, StringSplitOptions.None).Last(), out var val) ? val : 0;
     }
 
     private Expression<Func<FlipInstance, bool>> StartsWithPerfect()
