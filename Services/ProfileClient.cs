@@ -50,6 +50,8 @@ public class ProfileClient : IProfileClient
         var isoTime = maxAge.ToString("yyyy-MM-ddTHH:mm:ssZ");
         var museumJson = await profileClient.ExecuteAsync(new RestRequest($"/api/profile/{playerId}/{profile}/museum?maxAge={isoTime}"));
         var donated = JsonConvert.DeserializeObject<DonatedToMuseum>(museumJson.Content);
+        if(donated == null)
+            return new HashSet<string>();
         return [.. donated.Items.Keys];
     }
 
