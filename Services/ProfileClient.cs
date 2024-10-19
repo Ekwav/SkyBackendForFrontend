@@ -14,6 +14,7 @@ public interface IProfileClient
     Task<List<ProfitableCraft>> FilterProfitableCrafts(Task<List<ProfitableCraft>> craftsTask, string playerId, string profileId);
     Task<Dictionary<string, ProfileClient.CollectionElem>> GetCollectionData(string playerId, string profile);
     Task<Dictionary<string, ProfileClient.SlayerElem>> GetSlayerData(string playerId, string profile);
+    Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile);
 }
 
 public class ProfileClient : IProfileClient
