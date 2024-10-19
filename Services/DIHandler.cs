@@ -91,6 +91,11 @@ namespace Coflnet.Sky.Commands.Shared
                 var config = context.GetRequiredService<IConfiguration>();
                 return new SniperApi(config["SNIPER_BASE_URL"]);
             });
+            services.AddSingleton<Sniper.Client.Api.IAuctionApi>(context =>
+            {
+                var config = context.GetRequiredService<IConfiguration>();
+                return new Sniper.Client.Api.AuctionApi(config["SNIPER_BASE_URL"]);
+            });
             services.AddSingleton<IAttributeApi>(context =>
             {
                 var config = context.GetRequiredService<IConfiguration>();
