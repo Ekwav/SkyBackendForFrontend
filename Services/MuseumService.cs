@@ -22,7 +22,7 @@ public class MuseumService
         this.hypixelItemService = hypixelItemService;
     }
 
-    public async Task<IEnumerable<Cheapest>> GetBestMuseumPrices(int amount = 30)
+    public async Task<IEnumerable<Cheapest>> GetBestMuseumPrices(HashSet<string> alreadyDonated, int amount = 30)
     {
         var items = await hypixelItemService.GetItemsAsync();
         var prices = await sniperApi.ApiAuctionLbinsGetAsync();
@@ -38,13 +38,15 @@ public class MuseumService
                 result.Add(item.Key, (price.Price / item.Value, price.AuctionId));
             }
         }
-        var best10 = result.OrderBy(i => i.Value.Item1).Take(amount).ToDictionary(i => i.Key, i => i.Value);
+        var best10 = result.Where(r => !alreadyDonated.Contains(r.Key))
+            .OrderBy(i => i.Value.Item1)
+            .Take(amount).ToDictionary(i => i.Key, i => i.Value);
         var ids = best10.Select(i => i.Value.auctionid).ToList();
         using (var db = new HypixelContext())
         {
             var auctions = await db.Auctions.Where(a => ids.Contains(a.UId)).ToListAsync();
             var byUid = auctions.ToDictionary(a => a.UId);
-            return best10.Where(b=>byUid.ContainsKey(b.Value.auctionid)).Select(a => new Cheapest
+            return best10.Where(b => byUid.ContainsKey(b.Value.auctionid)).Select(a => new Cheapest
             {
                 AuctuinUuid = byUid[a.Value.auctionid].Uuid,
                 ItemName = byUid[a.Value.auctionid].ItemName,

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Coflnet.Sky.Crafts.Models;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +42,12 @@ public class ProfileClient : IProfileClient
         var slayerJson = await profileClient.ExecuteAsync(new RestRequest($"/api/profile/{playerId}/{profile}/data/slayers"));
         var slayer = JsonConvert.DeserializeObject<Dictionary<string, SlayerElem>>(slayerJson.Content);
         return slayer;
+    }
+    public async Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile)
+    {
+        var museumJson = await profileClient.ExecuteAsync(new RestRequest($"/api/profile/{playerId}/{profile}/museum"));
+        var donated = JsonConvert.DeserializeObject<DonatedToMuseum>(museumJson.Content);
+        return [.. donated.Items.Keys];
     }
 
     public async Task<List<ProfitableCraft>> FilterProfitableCrafts(Task<List<ProfitableCraft>> craftsTask, string playerId, string profileId)
@@ -91,6 +98,13 @@ public class ProfileClient : IProfileClient
         /// The collection tier/level this requires
         /// </summary>
         public int tier;
+    }
+
+    public class DonatedToMuseum
+    {
+        public long Value;
+        public bool Appraisal;
+        public Dictionary<string, object> Items;
     }
 }
 
