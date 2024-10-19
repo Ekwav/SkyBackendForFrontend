@@ -22,7 +22,7 @@ public class MuseumService
         this.hypixelItemService = hypixelItemService;
     }
 
-    public async Task<IEnumerable<Cheapest>> GetBestMuseumPrices()
+    public async Task<IEnumerable<Cheapest>> GetBestMuseumPrices(int amount = 30)
     {
         var items = await hypixelItemService.GetItemsAsync();
         var prices = await sniperApi.ApiAuctionLbinsGetAsync();
@@ -38,7 +38,7 @@ public class MuseumService
                 result.Add(item.Key, (price.Price / item.Value, price.AuctionId));
             }
         }
-        var best10 = result.OrderBy(i => i.Value.Item1).Take(40).ToDictionary(i => i.Key, i => i.Value);
+        var best10 = result.OrderBy(i => i.Value.Item1).Take(amount).ToDictionary(i => i.Key, i => i.Value);
         var ids = best10.Select(i => i.Value.auctionid).ToList();
         using (var db = new HypixelContext())
         {
