@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Coflnet.Sky.Core.Services;
 using Coflnet.Sky.Core;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Coflnet.Sky.Commands.Shared;
 
@@ -42,6 +43,16 @@ public class MuseumService
             {
                 result.Add(item.Key, (price.Price / item.Value, new[] { price.AuctionId }));
             }
+        }
+        foreach (var item in set)
+        {
+            var auctions = item.Value.Item2.Select(i => prices.GetValueOrDefault(i));
+            if(auctions.Any(a=>a == null))
+            {
+                continue;
+            }
+            var price = auctions.Sum(a => a.Price) / item.Value.Item1;
+            result.Add(item.Key.Key, (price, item.Value.Item2.Select(i => prices[i].AuctionId).ToArray()));
         }
         var best10 = result.Where(r => !alreadyDonated.Contains(r.Key))
             .OrderBy(i => i.Value.Item1)
