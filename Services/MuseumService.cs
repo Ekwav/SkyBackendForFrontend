@@ -30,7 +30,7 @@ public class MuseumService
         var donateableItems = items.Where(i => i.Value.MuseumData != null);
         var single = donateableItems.Where(i => i.Value.MuseumData.DonationXp > 0).ToDictionary(i => i.Key, i => i.Value.MuseumData.DonationXp);
 
-        var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
+        var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp != null && i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
                 .GroupBy(i=>i.Value.MuseumData.ArmorSetDonationXp.First().Key)
                 .ToDictionary(i => i.First().Value.MuseumData.ArmorSetDonationXp.First(), 
                     i => (i.First().Value.MuseumData.ArmorSetDonationXp.First().Value, i.Select(j => j.Key).ToArray()));
