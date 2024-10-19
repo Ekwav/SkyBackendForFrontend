@@ -32,8 +32,8 @@ public class MuseumService
         var single = donateableItems.Where(i => i.Value.MuseumData.DonationXp > 0).ToDictionary(i => i.Key, i => i.Value.MuseumData.DonationXp);
 
         var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp != null && i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
-                .GroupBy(i=>i.Value.MuseumData.ArmorSetDonationXp.First().Key)
-                .ToDictionary(i => i.First().Value.MuseumData.ArmorSetDonationXp.First(), 
+                .GroupBy(i => i.Value.MuseumData.ArmorSetDonationXp.First().Key)
+                .ToDictionary(i => i.First().Value.MuseumData.ArmorSetDonationXp.First(),
                     i => (i.First().Value.MuseumData.ArmorSetDonationXp.First().Value, i.Select(j => j.Key).ToArray()));
 
         var result = new Dictionary<string, (long pricePerExp, long[] auctionid)>();
@@ -47,7 +47,7 @@ public class MuseumService
         foreach (var item in set)
         {
             var auctions = item.Value.Item2.Select(i => prices.GetValueOrDefault(i));
-            if(auctions.Any(a=>a == null))
+            if (auctions.Any(a => a == null))
             {
                 continue;
             }
@@ -62,13 +62,14 @@ public class MuseumService
         {
             var auctions = await db.Auctions.Where(a => ids.Contains(a.UId)).ToListAsync();
             var byUid = auctions.ToDictionary(a => a.UId);
-            return best10.Where(b => b.Value.auctionid.All(x=>byUid.ContainsKey(x))).Select(a => {
-                if(a.Value.auctionid.Length > 1)
+            return best10.Where(b => b.Value.auctionid.All(x => byUid.ContainsKey(x))).Select(a =>
+            {
+                if (a.Value.auctionid.Length > 1)
                 {
                     return new Cheapest
                     {
-                        Uuids = a.Value.auctionid.Select(x=>byUid[x].Uuid).ToArray(),
-                        ItemName = byUid[a.Value.auctionid[0]].ItemName,
+                        Options = a.Value.auctionid.Select(x => (byUid[x].Uuid, byUid[x].ItemName)).ToArray(),
+                        ItemName = a.Key,
                         PricePerExp = a.Value.pricePerExp
                     };
                 }
@@ -85,7 +86,7 @@ public class MuseumService
     public class Cheapest
     {
         public string AuctuinUuid { get; set; }
-        public string[] Uuids { get; set; }
+        public (string uuid, string name)[] Options { get; set; }
         public string ItemName { get; set; }
         public long PricePerExp { get; set; }
     }
