@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ public interface IProfileClient
     Task<List<ProfitableCraft>> FilterProfitableCrafts(Task<List<ProfitableCraft>> craftsTask, string playerId, string profileId);
     Task<Dictionary<string, ProfileClient.CollectionElem>> GetCollectionData(string playerId, string profile);
     Task<Dictionary<string, ProfileClient.SlayerElem>> GetSlayerData(string playerId, string profile);
-    Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile);
+    Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile, DateTime maxAge);
 }
 
 public class ProfileClient : IProfileClient
@@ -44,9 +45,10 @@ public class ProfileClient : IProfileClient
         var slayer = JsonConvert.DeserializeObject<Dictionary<string, SlayerElem>>(slayerJson.Content);
         return slayer;
     }
-    public async Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile)
+    public async Task<HashSet<string>> GetAlreadyDonatedToMuseum(string playerId, string profile, DateTime maxAge)
     {
-        var museumJson = await profileClient.ExecuteAsync(new RestRequest($"/api/profile/{playerId}/{profile}/museum"));
+        var isoTime = maxAge.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        var museumJson = await profileClient.ExecuteAsync(new RestRequest($"/api/profile/{playerId}/{profile}/museum?maxAge={isoTime}"));
         var donated = JsonConvert.DeserializeObject<DonatedToMuseum>(museumJson.Content);
         return [.. donated.Items.Keys];
     }
