@@ -57,7 +57,7 @@ public class FilterStateService
             State.PreviousMayor = mayorApi.MayorLastGet().ToLower();
             State.NextMayor = (await mayorApi.MayorNextGetAsync())?.Name?.ToLower();
             UpdateCurrentPerks();
-            logger.LogInformation("Current mayor is {current}", State.CurrentMayor);
+            logger.LogInformation("Current mayor is {current}, perks: {perks}", State.CurrentMayor, string.Join(", ", State.CurrentPerks));
         }
         catch (Exception e)
         {
