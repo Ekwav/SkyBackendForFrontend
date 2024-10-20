@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Castle.Core.Logging;
 using Coflnet.Sky.Core;
 using Coflnet.Sky.Items.Client.Api;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
@@ -39,5 +41,23 @@ public class IntroductionAgeDaysTests
         // adding new item now does not change
         ItemDetails.Instance.TagLookup.TryAdd("test", 1);
         Assert.That(comparer(flipSample));
+    }
+
+    [Test]
+    public async Task StateIsCopiedNotOverriden()
+    {
+        var filterStateService = new FilterStateService(NullLogger<FilterStateService>.Instance,new Mock<Mayor.Client.Api.IMayorApi>().Object,new Mock<IItemsApi>().Object);
+        var previousReference = filterStateService.State.CurrentPerks;
+        await filterStateService.UpdateState(new FilterStateService.FilterState()
+        {
+            IntroductionAge = new Dictionary<int, HashSet<string>>()
+            {
+                { 1, new HashSet<string>() { "test" } }
+            },
+            CurrentPerks = new HashSet<string>() { "test" }
+        });
+        filterStateService.State.IntroductionAge[1].Should().Contain("test");
+        filterStateService.State.CurrentPerks.Should().Contain("test");
+        Assert.That(filterStateService.State.CurrentPerks, Is.SameAs(previousReference));
     }
 }

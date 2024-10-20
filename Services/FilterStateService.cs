@@ -148,30 +148,33 @@ public class FilterStateService
 
     private static void UpdateState(FilterState newState, FilterState local)
     {
-        local.CurrentMayor = newState.CurrentMayor;
-        local.NextMayor = newState.NextMayor;
-        local.PreviousMayor = newState.PreviousMayor;
-        foreach (var item in newState.ExistingTags)
+        var properties = typeof(FilterState).GetProperties();
+        foreach (var property in properties)
         {
-            local.ExistingTags.Add(item);
-        }
-        foreach (var day in newState.IntroductionAge)
-        {
-            local.IntroductionAge.TryAdd(day.Key, new());
-            foreach (var item in day.Value)
+            if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(HashSet<>))
             {
-                local.IntroductionAge[day.Key].Add(item);
+                var localSet = (HashSet<string>)property.GetValue(local);
+                var newSet = (HashSet<string>)property.GetValue(newState);
+                localSet.Clear();
+                foreach (var item in newSet)
+                {
+                    localSet.Add(item);
+                }
             }
-        }
-        foreach (var item in newState.itemCategories)
-        {
-            local.itemCategories.AddOrUpdate(item.Key, item.Value, (k, v) => v.Union(item.Value).ToHashSet());
-        }
-        local.LastUpdate = DateTime.UtcNow;
-        local.CurrentPerks.Clear();
-        foreach (var item in newState.CurrentPerks)
-        {
-            local.CurrentPerks.Add(item);
+            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                var localDict = (Dictionary<int, HashSet<string>>)property.GetValue(local);
+                var newDict = (Dictionary<int, HashSet<string>>)property.GetValue(newState);
+                localDict.Clear();
+                foreach (var item in newDict)
+                {
+                    localDict.Add(item.Key, new HashSet<string>(item.Value));
+                }
+            }
+            else
+            {
+                property.SetValue(local, property.GetValue(newState));
+            }
         }
     }
 
