@@ -168,6 +168,11 @@ public class FilterStateService
             local.itemCategories.AddOrUpdate(item.Key, item.Value, (k, v) => v.Union(item.Value).ToHashSet());
         }
         local.LastUpdate = DateTime.UtcNow;
+        local.CurrentPerks.Clear();
+        foreach (var item in newState.CurrentPerks)
+        {
+            local.CurrentPerks.Add(item);
+        }
     }
 
     public record MayorResponse(
