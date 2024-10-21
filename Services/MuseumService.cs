@@ -52,6 +52,12 @@ public class MuseumService
         }
     }
 
+    private static readonly Dictionary<string, string[]> ExtraItemsRequired = new()
+    {
+        { "CRIMSON_HUNTER", [ "BLAZE_BELT"] },
+        {"SNOW_SUIT", ["SNOW_NECKLACE", "SNOW_CLOAK", "SNOW_BELT", "SNOW_GLOVES"] },
+    };
+
     public async Task<Dictionary<string, (long pricePerExp, long[] auctionid)>> GetBestOptions(HashSet<string> alreadyDonated, int amount)
     {
         var items = await hypixelItemService.GetItemsAsync();
@@ -67,7 +73,21 @@ public class MuseumService
         var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp != null && i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
                 .GroupBy(i => i.Value.MuseumData.ArmorSetDonationXp.First().Key)
                 .ToDictionary(i => i.First().Value.MuseumData.ArmorSetDonationXp.First(),
-                    i => (i.First().Value.MuseumData.ArmorSetDonationXp.First().Value, i.Select(j => j.Key).ToArray()));
+                    i => (i.First().Value.MuseumData.ArmorSetDonationXp.First().Value, i.Select(j => j.Key).ToHashSet()));
+
+        // some sets contain extra items not listed in the api yet
+        foreach (var item in set)
+        {
+            if (!ExtraItemsRequired.TryGetValue(item.Key.Key, out var extraItems))
+            {
+                continue;
+            }
+            foreach (var extraItem in extraItems)
+            {
+                item.Value.Item2.Add(extraItem);
+            }
+        }
+
 
         var result = new Dictionary<string, (long pricePerExp, long[] auctionid)>();
         foreach (var item in single)
