@@ -55,6 +55,7 @@ public class MuseumService
     private static readonly Dictionary<string, string[]> ExtraItemsRequired = new()
     {
         { "CRIMSON_HUNTER", [ "BLAZE_BELT"] },
+        // ^ items with multiple sets
         {"SNOW_SUIT", ["SNOW_NECKLACE", "SNOW_CLOAK", "SNOW_BELT", "SNOW_GLOVES"] },
     };
 
@@ -71,14 +72,15 @@ public class MuseumService
         var single = donateableItems.Where(i => i.Value.MuseumData.DonationXp > 0).ToDictionary(i => i.Key, i => i.Value.MuseumData.DonationXp);
 
         var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp != null && i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
-                .GroupBy(i => i.Value.MuseumData.ArmorSetDonationXp.First().Key)
-                .ToDictionary(i => i.First().Value.MuseumData.ArmorSetDonationXp.First(),
-                    i => (i.First().Value.MuseumData.ArmorSetDonationXp.First().Value, i.Select(j => j.Key).ToHashSet()));
+                .SelectMany(i => i.Value.MuseumData.ArmorSetDonationXp.Select(aset=>(i.Key, aset)))
+                .GroupBy(i => i.aset.Key) // there are 14 items that are part of multiple sets
+                .ToDictionary(i => i.Key,
+                    i => (i.First().aset.Value, i.Select(j => j.Key).ToHashSet()));
 
         // some sets contain extra items not listed in the api yet
         foreach (var item in set)
         {
-            if (!ExtraItemsRequired.TryGetValue(item.Key.Key, out var extraItems))
+            if (!ExtraItemsRequired.TryGetValue(item.Key, out var extraItems))
             {
                 continue;
             }
@@ -105,7 +107,7 @@ public class MuseumService
                 continue;
             }
             var price = auctions.Sum(a => a.Price) / item.Value.Item1;
-            result.Add(item.Key.Key, (price, item.Value.Item2.Select(i => prices[i].AuctionId).ToArray()));
+            result.Add(item.Key, (price, item.Value.Item2.Select(i => prices[i].AuctionId).ToArray()));
         }
         var best10 = result.Where(r => !alreadyDonated.Contains(r.Key))
             .OrderBy(i => i.Value.Item1)
