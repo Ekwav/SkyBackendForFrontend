@@ -27,6 +27,10 @@ public class MuseumService
     {
         var items = await hypixelItemService.GetItemsAsync();
         var prices = await sniperApi.ApiAuctionLbinsGetAsync();
+        AddDonatedParents(alreadyDonated, items);
+        AddDonatedParents(alreadyDonated, items);
+        AddDonatedParents(alreadyDonated, items);
+        AddDonatedParents(alreadyDonated, items); // 4 layers deep
 
         var donateableItems = items.Where(i => i.Value.MuseumData != null);
         var single = donateableItems.Where(i => i.Value.MuseumData.DonationXp > 0).ToDictionary(i => i.Key, i => i.Value.MuseumData.DonationXp);
@@ -80,6 +84,20 @@ public class MuseumService
                     PricePerExp = a.Value.pricePerExp
                 };
             });
+        }
+    }
+
+    private static void AddDonatedParents(HashSet<string> alreadyDonated, Dictionary<string, Core.Services.Item> items)
+    {
+        foreach (var item in items)
+        {
+            var parent = item.Value.MuseumData?.Parent?.GetValueOrDefault(item.Value.Id);
+            if (parent == null)
+            {
+                continue;
+            }
+            if (alreadyDonated.Contains(parent))
+                alreadyDonated.Add(item.Value.Id);
         }
     }
 
