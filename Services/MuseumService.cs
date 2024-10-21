@@ -72,7 +72,7 @@ public class MuseumService
         var single = donateableItems.Where(i => i.Value.MuseumData.DonationXp > 0).ToDictionary(i => i.Key, i => i.Value.MuseumData.DonationXp);
 
         var set = donateableItems.Where(i => i.Value.MuseumData.ArmorSetDonationXp != null && i.Value.MuseumData.ArmorSetDonationXp?.Count != 0)
-                .SelectMany(i => i.Value.MuseumData.ArmorSetDonationXp.Select(aset=>(i.Key, aset)))
+                .SelectMany(i => i.Value.MuseumData.ArmorSetDonationXp.Select(aset => (i.Key, aset)))
                 .GroupBy(i => i.aset.Key) // there are 14 items that are part of multiple sets
                 .ToDictionary(i => i.Key,
                     i => (i.First().aset.Value, i.Select(j => j.Key).ToHashSet()));
@@ -119,13 +119,13 @@ public class MuseumService
     {
         foreach (var item in items)
         {
-            var parent = item.Value.MuseumData?.Parent?.GetValueOrDefault(item.Value.Id);
-            if (parent == null)
+            var parent = item.Value.MuseumData?.Parent?.FirstOrDefault().Value;
+            if (parent == default)
             {
                 continue;
             }
             if (alreadyDonated.Contains(parent))
-                alreadyDonated.Add(item.Value.Id);
+                alreadyDonated.Add(item.Value.MuseumData?.Parent.First().Key);
         }
     }
 
