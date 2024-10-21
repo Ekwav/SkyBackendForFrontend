@@ -14,9 +14,9 @@ public class MuseumService
 {
     private IAuctionApi sniperApi;
     private ILogger<MuseumService> logger;
-    private HypixelItemService hypixelItemService;
+    private IHypixelItemStore hypixelItemService;
 
-    public MuseumService(IAuctionApi sniperApi, ILogger<MuseumService> logger, HypixelItemService hypixelItemService)
+    public MuseumService(IAuctionApi sniperApi, ILogger<MuseumService> logger, IHypixelItemStore hypixelItemService)
     {
         this.sniperApi = sniperApi;
         this.logger = logger;
@@ -24,6 +24,35 @@ public class MuseumService
     }
 
     public async Task<IEnumerable<Cheapest>> GetBestMuseumPrices(HashSet<string> alreadyDonated, int amount = 30)
+    {
+        Dictionary<string, (long pricePerExp, long[] auctionid)> best10 = await GetBestOptions(alreadyDonated, amount);
+        var ids = best10.SelectMany(i => i.Value.auctionid).ToList();
+        using (var db = new HypixelContext())
+        {
+            var auctions = await db.Auctions.Where(a => ids.Contains(a.UId)).ToListAsync();
+            var byUid = auctions.ToDictionary(a => a.UId);
+            return best10.Where(b => b.Value.auctionid.All(x => byUid.ContainsKey(x))).Select(a =>
+            {
+                if (a.Value.auctionid.Length > 1)
+                {
+                    return new Cheapest
+                    {
+                        Options = a.Value.auctionid.Select(x => (byUid[x].Uuid, byUid[x].ItemName)).ToArray(),
+                        ItemName = a.Key,
+                        PricePerExp = a.Value.pricePerExp
+                    };
+                }
+                return new Cheapest
+                {
+                    AuctuinUuid = byUid[a.Value.auctionid.First()].Uuid,
+                    ItemName = byUid[a.Value.auctionid.First()].ItemName,
+                    PricePerExp = a.Value.pricePerExp
+                };
+            });
+        }
+    }
+
+    public async Task<Dictionary<string, (long pricePerExp, long[] auctionid)>> GetBestOptions(HashSet<string> alreadyDonated, int amount)
     {
         var items = await hypixelItemService.GetItemsAsync();
         var prices = await sniperApi.ApiAuctionLbinsGetAsync();
@@ -61,30 +90,7 @@ public class MuseumService
         var best10 = result.Where(r => !alreadyDonated.Contains(r.Key))
             .OrderBy(i => i.Value.Item1)
             .Take(amount).ToDictionary(i => i.Key, i => i.Value);
-        var ids = best10.SelectMany(i => i.Value.auctionid).ToList();
-        using (var db = new HypixelContext())
-        {
-            var auctions = await db.Auctions.Where(a => ids.Contains(a.UId)).ToListAsync();
-            var byUid = auctions.ToDictionary(a => a.UId);
-            return best10.Where(b => b.Value.auctionid.All(x => byUid.ContainsKey(x))).Select(a =>
-            {
-                if (a.Value.auctionid.Length > 1)
-                {
-                    return new Cheapest
-                    {
-                        Options = a.Value.auctionid.Select(x => (byUid[x].Uuid, byUid[x].ItemName)).ToArray(),
-                        ItemName = a.Key,
-                        PricePerExp = a.Value.pricePerExp
-                    };
-                }
-                return new Cheapest
-                {
-                    AuctuinUuid = byUid[a.Value.auctionid.First()].Uuid,
-                    ItemName = byUid[a.Value.auctionid.First()].ItemName,
-                    PricePerExp = a.Value.pricePerExp
-                };
-            });
-        }
+        return best10;
     }
 
     private static void AddDonatedParents(HashSet<string> alreadyDonated, Dictionary<string, Core.Services.Item> items)
