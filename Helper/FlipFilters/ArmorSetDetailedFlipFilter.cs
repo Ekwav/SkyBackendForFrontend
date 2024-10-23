@@ -7,14 +7,25 @@ using Coflnet.Sky.Core;
 using Coflnet.Sky.Filter;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using Coflnet.Sky.Core.Services;
 
 namespace Coflnet.Sky.Commands.Shared;
 public class ArmorSetDetailedFlipFilter : DetailedFlipFilter
 {
-    public object[] Options => ItemDetails.Instance.TagLookup
-        .Where(t => t.Key.EndsWith("_LEGGINGS") && IsOnAh(t))
-        .Select(t => (object)t.Key.Replace("_LEGGINGS", "")).Concat(ExtraArmorSets.Keys).ToArray();
+    public object[] Options => GetSetOptions();
 
+    private static object[] GetSetOptions()
+    {
+        var service = DiHandler.GetService<HypixelItemService>();
+        var sets = service.GetArmorSets();
+        if (sets.Count > 2)
+        {
+            return sets.Keys.ToArray();
+        }
+        return ItemDetails.Instance.TagLookup
+                .Where(t => t.Key.EndsWith("_LEGGINGS") && IsOnAh(t))
+                .Select(t => (object)t.Key.Replace("_LEGGINGS", "")).Concat(ExtraArmorSets.Keys).ToArray();
+    }
 
     public static ReadOnlyDictionary<string, string[]> ExtraArmorSets = new(new Dictionary<string, string[]>
     {
@@ -31,6 +42,9 @@ public class ArmorSetDetailedFlipFilter : DetailedFlipFilter
     {
         if (ExtraArmorSets.TryGetValue(val, out var set))
             return flip => set.Contains(flip.Auction.Tag);
+        var service = DiHandler.GetService<HypixelItemService>();
+        if (service.GetArmorSets().TryGetValue(val, out var tags))
+            return flip => tags.Contains(flip.Auction.Tag);
         var regex = new Regex('^' + Regex.Escape(val) + "_(CHESTPLATE|HELMET|BOOTS|LEGGINGS)");
         return flip => regex.Match(flip.Auction.Tag).Success;
     }
