@@ -74,7 +74,7 @@ namespace Coflnet.Sky.Commands.Helper
                 properties.Add(new Property($"Unlocked: {(unlocked_slots.Sum(c => c == ',' ? 1 : 0) + 1)}", 15));
             if (data.ContainsKey("ethermerge"))
                 properties.Add(new Property($"Ethermerge", 13));
-            if (data.TryGetValue("color", out string color))
+            if (data.TryGetValue("color", out string color) && !string.IsNullOrEmpty(color))
                 properties.Add(new Property($"Color: {FormatHex(color)}", 5));
 
             properties.AddRange(data.Where(p => p.Value == "PERFECT" || p.Value == "FLAWLESS")
