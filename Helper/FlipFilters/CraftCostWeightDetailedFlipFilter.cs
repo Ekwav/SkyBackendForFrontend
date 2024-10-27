@@ -18,7 +18,19 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         { "ultimate_fatal_tempo", 0.65},
         { "rarity_upgrades", 0.5},
         { "upgrade_level", 0.8},
-        { "talisman_enrichment", 0.1}
+        { "talisman_enrichment", 0.1},
+        { "RUNE_MUSIC", 0.5},
+        { "RUNE_MEOW_MUSIC", 0.5},
+        { "RUNE_DRAGON", 0.5},
+        { "RUNE_TIDAL", 0.5},
+        { "RUNE_GRAND_SEARING", 0.5},
+        { "RUNE_ENCHANT", 0.5},
+        { "RUNE_BARK_TUNES", 0.5},
+        { "RUNE_BARK_SMITTEN", 0.5},
+        { "RUNE_BARK_ICE_SKATES", 0.5},
+        { "RUNE_SPELLBOUND", 0.5},
+        { "RUNE_GRAND_FREEZING", 0.5},
+        { "RUNE_PRIMAL_FEAR", 0.5}
     };
 
     public override Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
