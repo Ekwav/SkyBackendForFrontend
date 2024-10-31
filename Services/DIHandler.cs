@@ -21,6 +21,7 @@ using Coflnet.Sky.Filter;
 using Coflnet.Sky.EventBroker.Client.Api;
 using Coflnet.Sky.Bazaar.Flipper.Client.Api;
 using Coflnet.Sky.Auctions.Client.Api;
+using Coflnet.Sky.Core.Services;
 
 namespace Coflnet.Sky.Commands.Shared
 {
@@ -204,6 +205,9 @@ namespace Coflnet.Sky.Commands.Shared
             services.AddHostedService<FilterLoader>();
             services.AddTransient<HypixelContext>(s => new HypixelContext());
             services.AddSingleton<FilterStateService>();
+            services.AddSingleton<HypixelItemService>();
+            services.AddSingleton<IHypixelItemStore>(di => di.GetRequiredService<HypixelItemService>());
+            services.AddHttpClient();
             services.AddSingleton<IProfileClient, ProfileClient>();
             services.AddSingleton<IBazaarFlipperApi, BazaarFlipperApi>(s =>
                 new BazaarFlipperApi(s.GetRequiredService<IConfiguration>()["BAZAARFLIPPER_BASE_URL"]));
