@@ -59,7 +59,7 @@ namespace Coflnet.Sky.Commands.Shared
             {
                 try
                 {
-                    var response = await api.SettingsUserIdSettingKeyGetWithHttpInfoAsync(userId, key);
+                    var response = await api.SettingsGetSettingWithHttpInfoAsync(userId, key);
                     if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                         return DefaultFor(defaultGetter);
                     value = response.Data;
@@ -97,7 +97,7 @@ namespace Coflnet.Sky.Commands.Shared
             {
                 try
                 {
-                    await api.SettingsUserIdSettingKeyPostAsync(userId, key, JsonConvert.SerializeObject(JsonConvert.SerializeObject(data)), 0, new System.Threading.CancellationTokenSource(3000).Token);
+                    await api.SettingsUpdateSettingAsync(userId, key, JsonConvert.SerializeObject(JsonConvert.SerializeObject(data)), 0, new System.Threading.CancellationTokenSource(3000).Token);
                     return;
                 }
                 catch (Exception e)
