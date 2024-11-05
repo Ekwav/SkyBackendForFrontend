@@ -5,8 +5,8 @@ using Coflnet.Sky.Filter;
 
 namespace Coflnet.Sky.Commands.Shared;
 
-[FilterDescription("Matches for connected Minecraft account name")]
-public class ConnectedMcNameDetailedFlipFilter : DetailedFlipFilter
+[FilterDescription("Matches for connected Minecraft account name/uuid")]
+public class ConnectedMcUserDetailedFlipFilter : DetailedFlipFilter
 {
     public object[] Options => [""];
 
