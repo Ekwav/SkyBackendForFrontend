@@ -17,6 +17,12 @@ public class RelistAtDetailedFlipFilter : NumberDetailedFlipFilter
     public Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
     {
         var target = NumberParser.Double(val);
-        return f => f.Context.TryAdd("target", target.ToString());
+        return f => AddTarget(f, target);
+    }
+
+    private static bool AddTarget(FlipInstance f, double target)
+    {
+        f.Context["target"] = target.ToString();
+        return true;
     }
 }
