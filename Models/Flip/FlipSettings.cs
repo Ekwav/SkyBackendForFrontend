@@ -447,7 +447,7 @@ namespace Coflnet.Sky.Commands.Shared
             {
                 Matchers[key] = compiled;
                 if (key != string.Empty)
-                    Matchers.Add("STARRED_" + key, compiled);
+                    Matchers["STARRED_" + key] = compiled;
             }
 
             private ConcurrentDictionary<string, List<ListEntry>> ExtractFiltersForTags()

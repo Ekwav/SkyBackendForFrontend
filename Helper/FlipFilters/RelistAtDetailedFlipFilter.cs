@@ -14,7 +14,7 @@ public class RelistAtDetailedFlipFilter : NumberDetailedFlipFilter
 
     public FilterType FilterType => FilterType.NUMERICAL;
 
-    public Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
+    public override Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
     {
         var target = NumberParser.Double(val);
         return f => AddTarget(f, target);
@@ -23,6 +23,6 @@ public class RelistAtDetailedFlipFilter : NumberDetailedFlipFilter
     private static bool AddTarget(FlipInstance f, double target)
     {
         f.Context["target"] = target.ToString();
-        return true;
+        return target * 0.97 > f.Auction.StartingBid;
     }
 }
