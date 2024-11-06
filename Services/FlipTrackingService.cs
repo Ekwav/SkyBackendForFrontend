@@ -402,7 +402,7 @@ namespace Coflnet.Sky.Commands
             }).ToArray();
             foreach (var uuid in uuids)
             {
-                if (timeSpan < TimeSpan.FromDays(7) || endTime <= DateTime.UtcNow - TimeSpan.FromSeconds(1))
+                if (timeSpan < TimeSpan.FromDays(6.999) || endTime <= DateTime.UtcNow - TimeSpan.FromSeconds(10))
                     continue;
                 var accountProfit = relevantFlips
                     .Where(f => f.uuid == uuid)
