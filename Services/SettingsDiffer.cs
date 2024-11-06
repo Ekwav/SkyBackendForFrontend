@@ -38,7 +38,7 @@ public class SettingsDiffer
             foreach (var command in settingsDiff.SetCommands)
             {
                 var parts = command.Split(' ');
-                updater.Update(settings, parts[0], parts[1]);
+                updater.Update(settings, parts[0], string.Join(' ', parts.Skip(1)));
             }
         }
 
