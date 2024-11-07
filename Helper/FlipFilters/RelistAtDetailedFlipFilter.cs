@@ -10,9 +10,9 @@ namespace Coflnet.Sky.Commands.Shared;
 [FilterDescription("Sets a price to relist at, mostly for user finder")]
 public class RelistAtDetailedFlipFilter : NumberDetailedFlipFilter
 {
-    public object[] Options => [1, 10_000_000_000];
+    public override object[] Options => [1, 10_000_000_000];
 
-    public FilterType FilterType => FilterType.NUMERICAL;
+    public override FilterType FilterType => FilterType.NUMERICAL;
 
     public override Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
     {
