@@ -80,7 +80,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         var valueSum = breakdown.Select(b => GetMultiplier(multipliers, defaultMultiplier, b, lookup) * b.Value).Sum()
             + long.Parse(f.Context["cleanCost"]);
 
-        if (target > valueSum - f.Auction.StartingBid)
+        if (target > valueSum * 0.98 - f.Auction.StartingBid)
             return false;
         f.Context["target"] = valueSum.ToString();
         return true;
