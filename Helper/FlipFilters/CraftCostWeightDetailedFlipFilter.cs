@@ -56,7 +56,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             multipliers.TryAdd(item.Key, item.Value);
         }
         if (!multipliers.TryGetValue("default", out var defaultMultiplier))
-            throw new CoflnetException("missing_argument", "No default multiplier provided, use default:1 to disable");
+            throw new CoflnetException("missing_argument", "No default multiplier provided, use default:0.9 to disable");
 
         filters.filters.TryGetValue("MinProfit", out var minprofitString);
         NumberParser.TryLong(minprofitString, out var target);
@@ -95,6 +95,10 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
 
     private static Dictionary<string, double> ParseMultipliers(string val)
     {
+        if(val.Contains('&'))
+        {
+            throw new CoflnetException("invalid_argument", "Use commas to separate multipliers, not `&`, also don't put unnecessary spaces anywhere");
+        }
         try
         {
             return val.Split(',').ToDictionary(m => m.Split(':')[0], m => NumberParser.Double(m.Split(':')[1]), StringComparer.OrdinalIgnoreCase);
