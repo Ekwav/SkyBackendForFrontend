@@ -10,7 +10,7 @@ namespace Coflnet.Sky.Commands.Shared;
 [FilterDescription("Above 1 reduces by absolute number, from 0-1 uses percentage 0.2 removes 20%")]
 public class ReduceTargetByDetailedFlipFilter : NumberDetailedFlipFilter
 {
-    public override object[] Options => [0, 10_000_000_000];
+    public override object[] Options => [0, 50_000_000_000];
 
     public FilterType FilterType => FilterType.NUMERICAL;
 

@@ -11,7 +11,7 @@ namespace Coflnet.Sky.Commands.Shared
 {
     public class NumberDetailedFlipFilter : DetailedFlipFilter
     {
-        public virtual object[] Options => new object[] { 1, 10_000_000_000 };
+        public virtual object[] Options => [1, 50_000_000_000];
         public virtual FilterType FilterType => FilterType.NUMERICAL | FilterType.RANGE;
         public virtual Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string content)
         {

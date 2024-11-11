@@ -7,7 +7,7 @@ namespace Coflnet.Sky.Commands.Shared;
 [FilterDescription("Maximum cost of an auction")]
 public class MaxCostDetailedFlipFilter : NoRangeBase
 {
-    public override object[] Options => new string[] { "0", 10_000_000_000.ToString() };
+    public override object[] Options => new string[] { "0", 50_000_000_000.ToString() };
 
     public override FilterType FilterType => FilterType.NUMERICAL;
 
