@@ -59,14 +59,16 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             throw new CoflnetException("missing_argument", "No default multiplier provided, use default:0.9 to disable");
 
         filters.filters.TryGetValue("MinProfit", out var minprofitString);
+        filters.filters.TryGetValue("MinProfitPercentage", out var minprofitPercentString);
         NumberParser.TryLong(minprofitString, out var target);
+        NumberParser.TryLong(minprofitPercentString, out var minProfitPercent);
         var anyDot = multipliers.Keys.Any(k => k.Contains('.'));
 
         return f => f.Finder == LowPricedAuction.FinderType.CraftCost &&
-            CalculateCraftCostWithMultipliers(f, multipliers, defaultMultiplier, target, anyDot); // clear up temp stored
+            CalculateCraftCostWithMultipliers(f, multipliers, defaultMultiplier, target, minProfitPercent, anyDot);
     }
 
-    private static bool CalculateCraftCostWithMultipliers(FlipInstance f, Dictionary<string, double> multipliers, double defaultMultiplier, long target, bool anyDot)
+    private static bool CalculateCraftCostWithMultipliers(FlipInstance f, Dictionary<string, double> multipliers, double defaultMultiplier, long target, long minProfitPercent, bool anyDot)
     {
         if (!f.Context.TryGetValue("breakdown", out var breakdownSerialized))
             return false;
@@ -79,8 +81,11 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             }
         var valueSum = breakdown.Select(b => GetMultiplier(multipliers, defaultMultiplier, b, lookup) * b.Value).Sum()
             + long.Parse(f.Context["cleanCost"]);
-
-        if (target > valueSum * 0.98 - f.Auction.StartingBid)
+        var targetMinusTax = valueSum * 0.98;
+        var profit = targetMinusTax - f.Auction.StartingBid;
+        if (target > profit)
+            return false;
+        if (minProfitPercent > 0 && minProfitPercent > profit * 100 / (f.LastKnownCost == 0 ? int.MaxValue : f.LastKnownCost))
             return false;
         f.Context["target"] = valueSum.ToString();
         return true;
