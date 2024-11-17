@@ -153,5 +153,5 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         "RUNE_SOULTWIST", "MINING_0", "RUNE_GEM", "RUNE_DRAGON", "gemstone_slots", "RUNE_ENDERSNAKE", "party_hat_color", "hunter", "RUNE_FIERY_BURST",
         "RUNE_WHITE_SPIRAL", "bow_kills", "RUNE_RAINBOW", "RUNE_ZAP", "RUNE_LIGHTNING", "RUNE_SMOKEY", "RUNE_GOLDEN_CARPET", "RUNE_MAGIC", "RUNE_HOT",
         "RUNE_COUTURE", "party_hat_emoji", "RUNE_SUPER_PUMPKIN", "RUNE_ICE", "RUNE_BLOOD_2", "RUNE_WAKE", "RUNE_FIRE_SPIRAL", "RUNE_BITE",
-        "RUNE_SPIRIT", "RUNE_HEARTS", "RUNE_GOLDEN"];
+        "RUNE_SPIRIT", "RUNE_HEARTS", "RUNE_GOLDEN", "ultimate_habanero_tactics"];
 }
