@@ -68,7 +68,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             CalculateCraftCostWithMultipliers(f, multipliers, defaultMultiplier, target, minProfitPercent, anyDot);
     }
 
-    private static bool CalculateCraftCostWithMultipliers(FlipInstance f, Dictionary<string, double> multipliers, double defaultMultiplier, long target, long minProfitPercent, bool anyDot)
+    private static bool CalculateCraftCostWithMultipliers(FlipInstance f, Dictionary<string, double> multipliers, double defaultMultiplier, long minProfit, long minProfitPercent, bool anyDot)
     {
         if (!f.Context.TryGetValue("breakdown", out var breakdownSerialized))
             return false;
@@ -83,7 +83,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             + long.Parse(f.Context["cleanCost"]);
         var targetMinusTax = valueSum * 0.98;
         var profit = targetMinusTax - f.Auction.StartingBid;
-        if (target > profit)
+        if (minProfit > profit)
             return false;
         if (minProfitPercent > 0 && minProfitPercent > profit * 100 / (f.LastKnownCost == 0 ? int.MaxValue : f.LastKnownCost))
             return false;

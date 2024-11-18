@@ -83,6 +83,7 @@ namespace Coflnet.Sky.Commands.Shared
                 return;
             }
             var filters = new Dictionary<string, string>(originalf);
+            var filtersToPass = new Dictionary<string, string>(filters);
             foreach (var item in AdditionalFilters.Keys)
             {
                 var match = filters.Where(f => f.Key.ToLower() == item.ToLower()).FirstOrDefault();
@@ -91,14 +92,14 @@ namespace Coflnet.Sky.Commands.Shared
                     try
                     {
                         filters.Remove(match.Key);
-                        var context = new FilterContext(filters, playerInfo);
+                        var context = new FilterContext(filtersToPass, playerInfo);
                         var newPart = AdditionalFilters[item].GetExpression(context, match.Value);
                         if (expression == null)
                             expression = newPart;
                         else if (newPart != null)
                             expression = newPart.And(expression);
                     }
-                    catch(CoflnetException)
+                    catch (CoflnetException)
                     {
                         throw; // forward error
                     }
@@ -145,7 +146,7 @@ namespace Coflnet.Sky.Commands.Shared
                         continue;
                     item.filter.Remove(onImportName);
                 }
-                if(oldList == null)
+                if (oldList == null)
                     return;
                 foreach (var filter in oldList)
                 {

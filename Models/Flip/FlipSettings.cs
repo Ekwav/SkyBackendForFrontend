@@ -144,12 +144,12 @@ namespace Coflnet.Sky.Commands.Shared
             try
             {
                 var match = WhiteListMatcher.IsMatch(flip);
-                if ((flip.Context?.TryGetValue("target", out string stringVal) ?? false) && double.TryParse(stringVal, out double target))
-                {
-                    flip.Target = (long)target;
-                }
                 if (match.Item1)
+                {
+                    if ((flip.Context?.TryGetValue("target", out string stringVal) ?? false) && double.TryParse(stringVal, out double target))
+                        flip.Target = (long)target;
                     return (true, "whitelist " + match.Item2);
+                }
             }
             catch (System.Exception e)
             {
