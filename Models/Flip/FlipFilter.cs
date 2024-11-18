@@ -98,6 +98,10 @@ namespace Coflnet.Sky.Commands.Shared
                         else if (newPart != null)
                             expression = newPart.And(expression);
                     }
+                    catch(CoflnetException)
+                    {
+                        throw; // forward error
+                    }
                     catch (Exception e)
                     {
                         using var errorAct = DiHandler.GetService<ActivitySource>().StartActivity("error");
