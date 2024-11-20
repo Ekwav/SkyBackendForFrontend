@@ -74,10 +74,28 @@ public class FilterStateService
                 logger.LogError(e, "Could not load item category {0}", item);
             }
         }
+       /*
+        Don't refresh to not introduce new tags as known that would be filtered
         var items = await itemsApi.ItemNamesGetAsync();
         foreach (var item in items.Select(i => i.Tag))
         {
             State.ExistingTags.Add(item);
+        }*/
+        foreach (var item in State.IntroductionAge)
+        {
+            if (item.Key <= 1)
+                continue;
+            var newItems = itemsApi.ItemsRecentGet(item.Key);
+            if (newItems == null)
+            {
+                logger.LogError("Could not load new items from {0} days", item.Key);
+                continue;
+            }
+            item.Value.Clear();
+            foreach (var newItem in newItems)
+            {
+                item.Value.Add(newItem);
+            }
         }
         logger.LogInformation("Loaded {0} item tags", State.ExistingTags.Count);
     }
