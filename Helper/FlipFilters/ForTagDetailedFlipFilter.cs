@@ -12,6 +12,6 @@ public class ForTagDetailedFlipFilter : DetailedFlipFilter
 
     public Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
     {
-        throw new NotImplementedException();
+        return null;
     }
 }
