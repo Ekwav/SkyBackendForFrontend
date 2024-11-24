@@ -51,12 +51,12 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             var mostSimilar = validModifiers.OrderBy(m => Fastenshtein.Levenshtein.Distance(targetAttrib, m)).First();
             throw new CoflnetException("invalid_argument", $"Invalid modifier `{item.Key}` provided, did you mean `{mostSimilar}`?");
         }
-        foreach (var item in DefaultWeights)
-        {
-            multipliers.TryAdd(item.Key, item.Value);
-        }
         if (!multipliers.TryGetValue("default", out var defaultMultiplier))
             throw new CoflnetException("missing_argument", "No default multiplier provided, use default:0.9 to disable");
+        foreach (var item in DefaultWeights)
+        {
+            multipliers.TryAdd(item.Key, Math.Min(item.Value, defaultMultiplier));
+        }
 
         filters.filters.TryGetValue("MinProfit", out var minprofitString);
         filters.filters.TryGetValue("MinProfitPercentage", out var minprofitPercentString);

@@ -14,7 +14,7 @@ public class CraftCostWeightTests
     [TestCase("2", "art_of_war_count:0.5,default:0.8", true, 45228000)]
     [TestCase("2", "art_of_war_count:0.5,art_of_war_count.1:1.5,default:0.8", true, 53428000)]
     [TestCase("2", "rarity_upgrades:0.1,default:0", true, 10820000)]
-    [TestCase("2", "default:0", true, 14100000)]
+    [TestCase("2", "default:0.1", true, 15018500)]
     [TestCase("4100000", "default:0", false, 0)]
     public void Test(string minProfit, string filterVal, bool expected, int target)
     {
@@ -60,6 +60,22 @@ public class CraftCostWeightTests
     {
         var filter = new CraftCostWeightDetailedFlipFilter();
         filter.Invoking(f => f.GetExpression(new(new() { { "MinProfit", "2" } }, null), filterVal)).Should().Throw<CoflnetException>().WithMessage(expected);
+    }
+
+    [Test]
+    public void OverrideDefaultPropertyWeightIfSpecifiedDefaultIsLower()
+    {
+        var filter = new CraftCostWeightDetailedFlipFilter();
+        var expression = filter.GetExpression(new(new() { { "MinProfit", "2" } }, null), "ethermerge:1,default:0.5");
+        var compiled = expression.Compile();
+        FlipInstance flip = GetSampleFlip();
+        flip.Context["cleanCost"] = "18000000";
+        flip.Context["breakdown"] = """
+        {"upgrade_level":172684180,"unlocked_slots":25344299,"ultimate_legion":15000001,"rarity_upgrades":8781214,"hotpc":7101810}
+        """;
+        // default weight for upgrade_level is 0.8 and should be overriden to 0.5
+        compiled.Invoke(flip).Should().BeTrue();
+        flip.Context["target"].Should().Be("132455752");
     }
 
 
