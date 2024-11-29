@@ -409,7 +409,7 @@ namespace Coflnet.Sky.Commands
                     .Where(f => f.Flip.SellTime > DateTime.UtcNow - TimeSpan.FromDays(7))
                     .Sum(f => f.Flip.Profit);
                 logger.LogInformation($"Player {uuid} made {accountProfit} profit in {timeSpan} {relevantFlips.Count} flips checked ({allSoldFlips.Count()})");
-                if (accountProfit == 0 && relevantFlips.Count() <= 1)
+                if (accountProfit == 0 && relevantFlips.Count() == 0)
                     continue;
                 SaveProfitToLeaderboard(uuids.First(), accountProfit);
             }
