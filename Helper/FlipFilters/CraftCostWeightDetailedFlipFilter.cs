@@ -106,9 +106,21 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         }
         try
         {
-            return val.Split(',').ToDictionary(m => m.Split(':')[0], m => NumberParser.Double(m.Split(':')[1]), StringComparer.OrdinalIgnoreCase);
+            return val.Split(',').Select(v=>{
+                if (!v.Contains(':'))
+                    throw new CoflnetException("invalid_argument", $"DoubleDot (:) missing in filter at '{v}'");
+                return v;
+            }).ToDictionary(m => m.Split(':')[0], m => NumberParser.Double(m.Split(':')[1]), StringComparer.OrdinalIgnoreCase);
         }
-        catch (System.Exception e)
+        catch (CoflnetException)
+        {
+            throw;
+        }
+        catch (ArgumentException e)
+        {
+            throw new CoflnetException("filter_parsing", $"Dupplicate weight in '{val.Truncate(20)}...' for {e.Message.Split("Key: ").Last()}");
+        }
+        catch (Exception e)
         {
             Console.WriteLine("craftcost filter: " + e);
             throw new CoflnetException("filter_parsing", $"Error in filter CraftCostWeight. Make sure to specify pairs separated by commas of like `modifier:multiplier,sharpness:0.7`");

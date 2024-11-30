@@ -56,6 +56,8 @@ public class CraftCostWeightTests
     [TestCase("default:.6 & hpc:0.6 & ultimate_wisdom:.4 & ultimate_legion:.4 & renowned:.5 & pesterminator:.3 & hecatomb:.3", "Use commas to separate multipliers, not `&`, also don't put unnecessary spaces anywhere")]
     [TestCase("hpc:0.6", "Invalid modifier `hpc` provided, did you mean `hotpc`?")]
     [TestCase("hotpc:0.6", "No default multiplier provided, use default:0.9 to disable")]
+    [TestCase("default:0.6,pristine:0.6,pristine:0.2", "Dupplicate weight in 'default:0.6,pristine...' for pristine")]
+    [TestCase("default:0.45,bane_of_Arthropods0.2,delicate:0.2", "DoubleDot (:) missing in filter at 'bane_of_Arthropods0.2'")]
     public void ExpectedErrors(string filterVal, string expected)
     {
         var filter = new CraftCostWeightDetailedFlipFilter();
