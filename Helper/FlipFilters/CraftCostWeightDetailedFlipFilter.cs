@@ -106,7 +106,8 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         }
         try
         {
-            return val.Split(',').Select(v=>{
+            return val.Split(',').Select(v =>
+            {
                 if (!v.Contains(':'))
                     throw new CoflnetException("invalid_argument", $"DoubleDot (:) missing in filter at '{v}'");
                 return v;
@@ -130,6 +131,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
     private readonly HashSet<string> validModifiers = ["default",
     "AMBER_0",
     "AMBER_1",
+    "AMETHYST_0",
     "AQUAMARINE_0",
     "AQUAMARINE_1",
     "arachno",
@@ -242,6 +244,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
     "MASTER_CRYPT_TANK_ZOMBIE_80",
     "MASTER_CRYPT_UNDEAD__ONAH_25",
     "MASTER_CRYPT_UNDEAD_AGENTK_25",
+    "MASTER_CRYPT_UNDEAD_ALEXANDER_40",
     "MASTER_CRYPT_UNDEAD_APUNCH_25",
     "MASTER_CRYPT_UNDEAD_BEMBO_25",
     "MASTER_CRYPT_UNDEAD_BLOOZING_25",
@@ -287,6 +290,8 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
     "paleontologist",
     "party_hat_color",
     "party_hat_emoji",
+    "PERIDOT_0",
+    "PERIDOT_1",
     "pesterminator",
     "petItem",
     "pgems",
@@ -387,6 +392,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
     "ultimate_fatal_tempo",
     "ultimate_flash",
     "ultimate_flowstate",
+    "ultimate_habanero_tactics",
     "ultimate_inferno",
     "ultimate_last_stand",
     "ultimate_legion",
@@ -402,6 +408,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
     "ultimate_wise",
     "undead",
     "undead_resistance",
+    "UNIVERSAL_0",
     "unlocked_slots",
     "upgrade_level",
     "vampirism",
