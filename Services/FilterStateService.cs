@@ -74,13 +74,13 @@ public class FilterStateService
                 logger.LogError(e, "Could not load item category {0}", item);
             }
         }
-       /*
-        Don't refresh to not introduce new tags as known that would be filtered
-        var items = await itemsApi.ItemNamesGetAsync();
-        foreach (var item in items.Select(i => i.Tag))
-        {
-            State.ExistingTags.Add(item);
-        }*/
+        /*
+         Don't refresh to not introduce new tags as known that would be filtered
+         var items = await itemsApi.ItemNamesGetAsync();
+         foreach (var item in items.Select(i => i.Tag))
+         {
+             State.ExistingTags.Add(item);
+         }*/
         foreach (var item in State.IntroductionAge)
         {
             if (item.Key <= 1)
@@ -169,6 +169,10 @@ public class FilterStateService
         var properties = typeof(FilterState).GetProperties();
         foreach (var property in properties)
         {
+            if (property.Name == nameof(FilterState.itemCategories))
+            {
+                continue;
+            }
             if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(HashSet<>))
             {
                 var localSet = (HashSet<string>)property.GetValue(local);
@@ -192,6 +196,19 @@ public class FilterStateService
             else
             {
                 property.SetValue(local, property.GetValue(newState));
+            }
+        }
+        // manually update item categories
+        foreach (var item in newState.itemCategories)
+        {
+            if (!local.itemCategories.ContainsKey(item.Key))
+            {
+                local.itemCategories[item.Key] = new HashSet<string>();
+            }
+            local.itemCategories[item.Key].Clear();
+            foreach (var itemValue in item.Value)
+            {
+                local.itemCategories[item.Key].Add(itemValue);
             }
         }
     }
