@@ -308,7 +308,7 @@ namespace Coflnet.Sky.Commands.Shared
             IEnumerable<ItemDetails.ItemSearchResult> items;
             try
             {
-                items = await itemTask;
+                items = await itemTask ?? throw new Exception("itemTask is null");
             }
             catch (Exception e)
             {
