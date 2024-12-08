@@ -87,7 +87,8 @@ namespace Coflnet.Sky.Commands.Shared
 
             else if (!options.TryGetValue(key, out SettingDoc doc))
             {
-                var closest = options.Keys.OrderBy(k => Fastenshtein.Levenshtein.Distance(k.ToLower(), key.ToLower())).First();
+                var closest = options.Keys.Where(k=>!options[k].Hide)
+                    .OrderBy(k => Fastenshtein.Levenshtein.Distance(k.ToLower(), key.ToLower())).First();
                 throw new UnknownSettingException(key, closest);
             }
             else if (doc.Prefix == "privacy")
