@@ -407,7 +407,8 @@ namespace Coflnet.Sky.Commands.Shared
                     Addmatcher(item.Key, matcher);
                     if (!cacheKey.Contains(nameof(UserPremiumTier), StringComparison.CurrentCultureIgnoreCase)
                         && !cacheKey.Contains(nameof(ConnectedMcUserDetailedFlipFilter), StringComparison.CurrentCultureIgnoreCase)
-                        && !cacheKey.Contains(nameof(ListingSlotsLeft), StringComparison.CurrentCultureIgnoreCase))
+                        && !cacheKey.Contains(nameof(ListingSlotsLeft), StringComparison.CurrentCultureIgnoreCase)
+                        && !cacheKey.Contains(nameof(PurseDetailedFlipFilter), StringComparison.CurrentCultureIgnoreCase))
                         matcherLookup.TryAdd(cacheKey, new CacheEntry { matcher = matcher, lastUsed = DateTime.Now });
                 }
                 if (matcherLookup.Count > 10_000)

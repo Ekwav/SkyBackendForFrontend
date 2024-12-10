@@ -46,7 +46,7 @@ namespace Coflnet.Sky.Commands.Shared
                     var commandSlug = (item.GetCustomAttributes(typeof(DataMemberAttribute), true).FirstOrDefault() as DataMemberAttribute)?.Name;
                     if (commandSlug == null)
                         commandSlug = item.Name;
-                    var doc = (item.GetCustomAttributes(typeof(SettingsDocAttribute), true).FirstOrDefault() as SettingsDocAttribute);
+                    var doc = item.GetCustomAttributes(typeof(SettingsDocAttribute), true).FirstOrDefault() as SettingsDocAttribute;
                     SettingDoc desc = GetDesc(item, doc, prefix);
                     options.Add(prefix + commandSlug, GetDesc(item, doc, prefix));
                     if (doc?.ShortHand != null)
