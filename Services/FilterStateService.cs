@@ -187,10 +187,21 @@ public class FilterStateService
             {
                 var localDict = (Dictionary<int, HashSet<string>>)property.GetValue(local);
                 var newDict = (Dictionary<int, HashSet<string>>)property.GetValue(newState);
-                localDict.Clear();
                 foreach (var item in newDict)
                 {
-                    localDict.Add(item.Key, new HashSet<string>(item.Value));
+                    if (!localDict.ContainsKey(item.Key))
+                    {
+                        localDict[item.Key] = new HashSet<string>();
+                    }
+                    else
+                    {
+                        var localElem = localDict[item.Key];
+                        localElem.Clear();
+                        foreach (var itemValue in newDict[item.Key])
+                        {
+                            localElem.Add(itemValue);
+                        }
+                    }
                 }
             }
             else

@@ -46,18 +46,26 @@ public class IntroductionAgeDaysTests
     [Test]
     public async Task StateIsCopiedNotOverriden()
     {
-        var filterStateService = new FilterStateService(NullLogger<FilterStateService>.Instance,new Mock<Mayor.Client.Api.IMayorApi>().Object,new Mock<IItemsApi>().Object);
+        var filterStateService = new FilterStateService(NullLogger<FilterStateService>.Instance, new Mock<Mayor.Client.Api.IMayorApi>().Object, new Mock<IItemsApi>().Object);
         var previousReference = filterStateService.State.CurrentPerks;
-        await filterStateService.UpdateState(new FilterStateService.FilterState()
+        await filterStateService.UpdateState(CreateState());
+        var previousIntroRef = filterStateService.State.IntroductionAge[1];
+        await filterStateService.UpdateState(CreateState());
+        filterStateService.State.IntroductionAge[1].Should().Contain("test");
+        filterStateService.State.CurrentPerks.Should().Contain("test");
+        filterStateService.State.IntroductionAge[1].Should().BeSameAs(previousIntroRef);
+        Assert.That(filterStateService.State.CurrentPerks, Is.SameAs(previousReference));
+    }
+
+    private static FilterStateService.FilterState CreateState()
+    {
+        return new FilterStateService.FilterState()
         {
             IntroductionAge = new Dictionary<int, HashSet<string>>()
             {
                 { 1, new HashSet<string>() { "test" } }
             },
             CurrentPerks = new HashSet<string>() { "test" }
-        });
-        filterStateService.State.IntroductionAge[1].Should().Contain("test");
-        filterStateService.State.CurrentPerks.Should().Contain("test");
-        Assert.That(filterStateService.State.CurrentPerks, Is.SameAs(previousReference));
+        };
     }
 }
