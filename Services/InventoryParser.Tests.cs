@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Coflnet.Sky.Core;
+using FluentAssertions;
 using MessagePack;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -421,8 +422,23 @@ public class InventoryParserTests
         Assert.That(4, Is.EqualTo(item.Enchantments.Where(e => e.Type == Core.Enchantment.EnchantmentType.chance).First().Level));
         Assert.That(1, Is.EqualTo(item.Count));
         Assert.That("b14aefbd-cbf8-4ca1-aa2e-5c0422807c60", Is.EqualTo(item.FlatenedNBT["uuid"]));
-        Assert.That("4/8/23 10:01 AM", Is.EqualTo(item.FlatenedNBT["timestamp"]));
+        item.ItemCreatedAt.Should().Be(new DateTime(2023, 4, 8, 10, 1, 0));
         Assert.That(Tier.SPECIAL, Is.EqualTo(item.Tier));
+    }
+
+    private string ctTimestamp = """
+    [{"id":"minecraft:iron_sword","Count":1,"tag":{"Unbreakable":1,"HideFlags":254,"display":{"Lore":["§6§lLEGENDARY DUNGEON SWORD"],"Name":"§f§f§6Livid Dagger"},
+        "ExtraAttributes":{"id":"LIVID_DAGGER","uuid":"fd0eb7f0-67e1-4747-8210-2f2d4574a1a0","timestamp":1734209309113}},"Damage":0}]
+    """;
+
+    [Test]
+    public void ParseCTTime()
+    {
+        var parser = new InventoryParser();
+        var serialized = MessagePackSerializer.Serialize(parser.Parse(ctTimestamp));
+        var item = MessagePackSerializer.Deserialize<List<SaveAuction>>(serialized)
+                        .Where(i => i != null).Last();
+        Assert.That(item.ItemCreatedAt, Is.EqualTo(new DateTime(2024,12,14, 20, 48, 29, 113, DateTimeKind.Utc)));
     }
 
     /// <summary>

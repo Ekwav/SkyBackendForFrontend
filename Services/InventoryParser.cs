@@ -267,7 +267,10 @@ public class InventoryParser
     {
         // format for 2/18/23 4:27 AM
         var format = "M/d/yy h:mm tt";
-        var stringDate = attributesWithoutEnchantments["timestamp"].ToString();
+        if (!attributesWithoutEnchantments.TryGetValue("timestamp", out var timestamp))
+            return;
+        var stringDate = timestamp.ToString();
+        Console.WriteLine(stringDate);
         if (long.TryParse(stringDate, out var milliseconds))
         {
             auction.ItemCreatedAt = DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).DateTime;
@@ -328,7 +331,8 @@ public class InventoryParser
                     .ToList();
 
             var flatNbt = NBT.FlattenNbtData(extraAttributes.ToObject<Dictionary<string, object>>()
-                        .Where(e => e.Key != "enchantments").ToDictionary(e => e.Key, e => e.Value));
+                        .Where(e => e.Key != "enchantments").ToDictionary(e => e.Key, e => e.Value))
+                            .ToDictionary(n=>n.Key,n=>n.Value);
             var auction = new SaveAuction()
             {
                 Count = (int)item["Count"],
@@ -344,7 +348,8 @@ public class InventoryParser
                     if (NBT.TryFindTierInString(line.ToString(), out Tier tier))
                         auction.Tier = tier;
                 }
-            auction.SetFlattenedNbt(flatNbt);
+            AssignCreationTime(flatNbt, auction);
+            auction.SetFlattenedNbt(flatNbt.ToList());
             FixItemTag(auction);
             if (auction.Tag?.EndsWith("RUNE") ?? false)
             {
