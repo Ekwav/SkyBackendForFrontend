@@ -11,6 +11,8 @@ public class AccountSettings
     public List<Reminder> Reminders = new();
     [DataMember(Name = "loadedConfig")]
     public OwnedConfigs.OwnedConfig LoadedConfig;
+    [DataMember(Name = "baseConfigVersion")]
+    public int BaseConfigVersion;
     [DataMember(Name = "autoUpdateConfig")]
     public bool AutoUpdateConfig = true;
 }
