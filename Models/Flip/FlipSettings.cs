@@ -63,6 +63,9 @@ namespace Coflnet.Sky.Commands.Shared
         [DataMember(Name = "publishedAs")]
         [SettingsDoc("What this settings is published under", true)]
         public string PublishedAs;
+        [DataMember(Name = "loadedVersion")]
+        [SettingsDoc("What version of the settings is used", true)]
+        public int UsedVersion;
 
         /// <summary>
         /// The initiating party that sent the change
