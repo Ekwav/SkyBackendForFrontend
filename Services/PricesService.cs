@@ -35,7 +35,7 @@ namespace Coflnet.Sky.Commands.Shared
             FilterEngine = filterEngine;
         }
 
-        private async Task<HashSet<string>> GetBazaarItems()
+        public async Task<HashSet<string>> GetBazaarItems()
         {
             if (bazaarItems == null || Random.Shared.NextDouble() < 0.01)
             {
