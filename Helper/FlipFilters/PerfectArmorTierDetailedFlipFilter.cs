@@ -1,6 +1,5 @@
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Coflnet.Sky.Filter;
@@ -9,11 +8,9 @@ namespace Coflnet.Sky.Commands.Shared;
 
 public class PerfectArmorTierDetailedFlipFilter : NumberDetailedFlipFilter
 {
-    public object[] Options => new object[] { 1, 13 };
+    public override object[] Options => [1, 13];
 
-    public FilterType FilterType => FilterType.NUMERICAL | FilterType.LOWER | FilterType.RANGE;
-
-    public Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
+    public override Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string val)
     {
         return StartsWithPerfect().And(base.GetExpression(filters, val));
     }
