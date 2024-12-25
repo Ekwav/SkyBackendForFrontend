@@ -27,6 +27,6 @@ public class PerfectArmorTierDetailedFlipFilter : NumberDetailedFlipFilter
 
     private Expression<Func<FlipInstance, bool>> StartsWithPerfect()
     {
-        return flip => flip.Tag.StartsWith("PERFECT_");
+        return flip => flip.Tag != null && flip.Tag.StartsWith("PERFECT_");
     }
 }
