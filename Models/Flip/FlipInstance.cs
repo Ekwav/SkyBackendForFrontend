@@ -62,7 +62,7 @@ namespace Coflnet.Sky.Commands.Shared
         {
             date ??= DateTime.UtcNow;
             var hoursSince = (date.Value - DerpyStart).TotalHours;
-            var isDerpy = (hoursSince % (124 * 25)) < 124 && hoursSince > 0;
+            var isDerpy = (hoursSince % (124 * 24)) < 124 && hoursSince > 0;
             var reduction = 2f;
             if (targetPrice > 10_000_000)
                 reduction = 3;

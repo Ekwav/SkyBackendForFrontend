@@ -19,6 +19,8 @@ public class FlipInstanceTests
         FlipInstance.GetFeeRateForStartingBid(1_000_000, derpyStart).Should().Be(5f);
         FlipInstance.GetFeeRateForStartingBid(1_000_000, derpyStart + TimeSpan.FromHours(123)).Should().Be(5f);
         FlipInstance.GetFeeRateForStartingBid(1_000_000, derpyStart + TimeSpan.FromHours(124.001)).Should().Be(2f);
-        FlipInstance.GetFeeRateForStartingBid(1_000_000, new DateTime(2025, 1, 3)).Should().Be(5f);
+        FlipInstance.GetFeeRateForStartingBid(1_000_000, new DateTime(2025, 1, 3)).Should().Be(2f);
+        FlipInstance.GetFeeRateForStartingBid(1_000_000, new DateTime(2024, 12, 29)).Should().Be(5f);
+        FlipInstance.GetFeeRateForStartingBid(1_000_000, new DateTime(2025, 5, 3)).Should().Be(5f);
     }
 }
