@@ -31,7 +31,7 @@ namespace Coflnet.Sky.Commands
         Task<FlipSumary> GetPlayerFlips(IEnumerable<string> uuids, TimeSpan timeSpan, DateTime endTime = default);
         Task<TierSumary> GetPreApiProfit();
         Task<(TimeSpan, int)> GetRecommendedPenalty(IEnumerable<string> playerIds);
-        Task<SpeedCompResult> GetSpeedComp(IEnumerable<string> playerIds);
+        Task<SpeedCompResult> GetSpeedComp(IEnumerable<string> playerIds, int minutes = 0);
         Task NewFlip(LowPricedAuction flip, DateTime foundAt = default);
         Task PurchaseConfirm(string auctionId, string playerId);
         Task PurchaseStart(string auctionId, string playerId);
@@ -264,9 +264,9 @@ namespace Coflnet.Sky.Commands
         /// <summary>
         /// Get the speed data for a given player
         /// </summary>
-        public virtual async Task<SpeedCompResult> GetSpeedComp(IEnumerable<string> playerIds)
+        public virtual async Task<SpeedCompResult> GetSpeedComp(IEnumerable<string> playerIds, int minutes = 0)
         {
-            return await flipAnalyse.PlayersSpeedPostAsync(new SpeedCheckRequest(playerIds.ToList())).ConfigureAwait(false);
+            return await flipAnalyse.PlayersSpeedPostAsync(new SpeedCheckRequest(playerIds.ToList(), default, minutes)).ConfigureAwait(false);
         }
 
         public async Task<int> ActiveFlipperCount()
