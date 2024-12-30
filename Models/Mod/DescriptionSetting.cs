@@ -19,6 +19,8 @@ public class DescriptionSetting
     public bool HighlightFilterMatch;
     [SettingsDoc("What is the minimum profit for highlighting best flip on page")]
     public long MinProfitForHighlight;
+    [SettingsDoc("Disable all highlighting")]
+    public bool DisableHighlighting;
 
     public static DescriptionSetting Default => new DescriptionSetting()
     {
