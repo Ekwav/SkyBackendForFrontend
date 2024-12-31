@@ -327,7 +327,7 @@ public class InventoryParser
                 continue;
             }
             var enchants = extraAttributes["enchantments"]?.ToObject<Dictionary<string, int>>()?
-                    .Select(e => new Enchantment() { Type = Enum.Parse<Enchantment.EnchantmentType>(e.Key), Level = (byte)e.Value })
+                    .Select(e => new Enchantment() { Type = Enum.Parse<Enchantment.EnchantmentType>(e.Key, true), Level = (byte)e.Value })
                     .ToList();
 
             var flatNbt = NBT.FlattenNbtData(extraAttributes.ToObject<Dictionary<string, object>>()
