@@ -405,7 +405,22 @@ public class InventoryParserTests
 [{"id":"minecraft:tnt","Count":2,"tag":{"ench":[],"HideFlags":254,"display":{"Lore":["§7Breaks weak walls. Can be used","§7to blow up Crypts in §cThe","§cCatacombs §7and §3Crystal","§3Hollows§7.","","§9§lRARE"],
 "Name":"§9Superboom TNT"},"ExtraAttributes":{"id":"SUPERBOOM_TNT"}},"Damage":0},
 {"id":"minecraft:stained_glass","Count":1,"tag":{"HideFlags":254,"display":{"Lore":["§7§oA rare space helmet forged","§7§ofrom shards of moon glass.","","§7§8This item can be reforged!","§c§lSPECIAL HELMET","pricePaid xyy"],
-"Name":"§cSpace Helmet"},"ExtraAttributes":{"id":"DCTR_SPACE_HELM","uuid":"b14aefbd-cbf8-4ca1-aa2e-5c0422807c60","timestamp":"4/8/23 10:01 AM", enchantments:{impaling:3,chance:4,piercing:1,infinite_quiver:10,ultimate_soul_eater:5,snipe:3,telekinesis:1,power:7}}},"Damage":14}]
+"Name":"§cSpace Helmet"},"ExtraAttributes":{"id":"DCTR_SPACE_HELM","uuid":"b14aefbd-cbf8-4ca1-aa2e-5c0422807c60","timestamp":"4/8/23 10:01 AM", enchantments:{impaling:3,chance:4,piercing:1,infinite_quiver:10,ultimate_soul_eater:5,snipe:3,telekinesis:1,power:7},
+"gems": {
+                "JASPER_0": {
+                    "uuid": "2441955e-8b8b-4373-914f-985077e6f530",
+                    "quality": "FLAWLESS"
+                },
+                "COMBAT_0": {
+                    "uuid": "f006fc85-4a65-4ecb-980f-0a8dcdf61713",
+                    "quality": "FLAWLESS"
+                },
+                "unlocked_slots": [
+                    "JASPER_0",
+                    "COMBAT_0"
+                ],
+                "COMBAT_0_gem": "JASPER"
+            }}},"Damage":14}]
 """;
     [Test]
     public void ParseCT()
