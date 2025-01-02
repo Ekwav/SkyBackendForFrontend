@@ -142,7 +142,7 @@ namespace Coflnet.Sky.Commands
 
         public async Task NewFlip(LowPricedAuction flip, DateTime foundAt = default)
         {
-            await flipTracking.TrackerFlipAuctionIdPostAsync(flip.Auction.Uuid, new Flip()
+            await flipTracking.TrackFlipAsync(flip.Auction.Uuid, new Flip()
             {
                 FinderType = Enum.TryParse<FinderType>(flip.Finder.ToString(), true, out var finder) ? finder : FinderType.UNKOWN,
                 TargetPrice = (int)flip.TargetPrice,
@@ -189,7 +189,7 @@ namespace Coflnet.Sky.Commands
             {
                 try
                 {
-                    return await flipTracking.FlipsPlayerIdGetAsync(Guid.Parse(a.AccountUuid), DateTime.UtcNow - TimeSpan.FromDays(1), DateTime.UtcNow);
+                    return await flipTracking.GetFlipsOfPlayerAsync(Guid.Parse(a.AccountUuid), DateTime.UtcNow - TimeSpan.FromDays(1), DateTime.UtcNow);
                 }
                 catch (Exception)
                 {
@@ -238,7 +238,7 @@ namespace Coflnet.Sky.Commands
 
         private async Task<long> LoadProfitOfSentFlips(List<FlipTimeSelection> sentRequest)
         {
-            var totalSent = await flipAnalyse.FlipsSentPostAsync(sentRequest);
+            var totalSent = await flipAnalyse.GetSentFlipsWithinAsync(sentRequest);
             var sentAuctionids = totalSent.Select(f => long.Parse(f.AuctionId)).ToHashSet();
             var sentMap = new Dictionary<string, (string, long)>();
             using (var context = new HypixelContext())
@@ -266,12 +266,12 @@ namespace Coflnet.Sky.Commands
         /// </summary>
         public virtual async Task<SpeedCompResult> GetSpeedComp(IEnumerable<string> playerIds, int minutes = 0)
         {
-            return await flipAnalyse.PlayersSpeedPostAsync(new SpeedCheckRequest(playerIds.ToList(), default, minutes)).ConfigureAwait(false);
+            return await flipAnalyse.CheckMultiAccountSpeedAsync(new SpeedCheckRequest(playerIds.ToList(), default, minutes)).ConfigureAwait(false);
         }
 
         public async Task<int> ActiveFlipperCount()
         {
-            return await flipAnalyse.UsersActiveCountGetAsync().ConfigureAwait(false);
+            return await flipAnalyse.GetNumberOfActiveFlipperUsersAsync().ConfigureAwait(false);
         }
 
         public async Task<List<FlipDetails>> GetFlipsForFinder(LowPricedAuction.FinderType type, DateTime start, DateTime end)
@@ -285,7 +285,7 @@ namespace Coflnet.Sky.Commands
             if (start < end - TimeSpan.FromDays(1))
                 throw new CoflnetException("span_to_large", "Querying for more than a day is not supported");
 
-            var idTask = flipAnalyse.AnalyseFinderFinderTypeGetAsync(Enum.Parse<FinderType>(type.ToString(), true), start, end).ConfigureAwait(false);
+            var idTask = flipAnalyse.GetForFinderAsync(Enum.Parse<FinderType>(type.ToString(), true), start, end).ConfigureAwait(false);
             using (var context = new HypixelContext())
             {
                 var receivedFlips = await idTask;
@@ -366,7 +366,7 @@ namespace Coflnet.Sky.Commands
             // use flipTracking.FlipsPlayerIdGetAsync(uuid)
             var allSoldFlips = await Task.WhenAll(uuids.Select(async uuid =>
             {
-                var response = await flipTracking.FlipsPlayerIdGetWithHttpInfoAsync(Guid.Parse(uuid), startTime, endTime);
+                var response = await flipTracking.GetFlipsOfPlayerWithHttpInfoAsync(Guid.Parse(uuid), startTime, endTime);
                 var list = JsonConvert.DeserializeObject<List<PastFlip>>(response.RawContent);
                 if (list == null)
                     throw new CoflnetException("load_failed", $"Loading flips for {uuid} failed");
@@ -419,68 +419,6 @@ namespace Coflnet.Sky.Commands
                 Flips = newFlips,
                 TotalProfit = profit
             };
-
-            using var context = new HypixelContext();
-            var playerIds = await context.Players.Where(p => uuids.Contains(p.UuId)).AsNoTracking().Select(p => p.Id).ToListAsync();
-            var uidKey = NBT.Instance.GetKeyId("uid");
-            var sellList = await context.Auctions.Where(a => playerIds.Contains(a.SellerId))
-                .Where(a => a.End > endTime && a.End < DateTime.UtcNow && a.HighestBidAmount > 0)
-                .Include(a => a.NBTLookup)
-                .Include(a => a.Enchantments)
-                .AsNoTracking()
-                .ToListAsync().ConfigureAwait(false);
-
-            var sells = sellList
-                .Where(a => a.NBTLookup.Where(l => l.KeyId == uidKey).Any())
-                .GroupBy(a =>
-                {
-                    return a.NBTLookup.Where(l => l.KeyId == uidKey).FirstOrDefault().Value;
-                }).ToList();
-            var SalesUidLookup = sells.Select(a => a.Key).ToHashSet();
-            var sales = await context.NBTLookups.Where(b => b.KeyId == uidKey && SalesUidLookup.Contains(b.Value)).AsNoTracking().Select(n => n.AuctionId).ToListAsync();
-            var playerBids = await context.Bids.Where(b => playerIds.Contains(b.BidderId) && sales.Contains(b.Auction.Id) && b.Timestamp > endTime.Subtract(TimeSpan.FromDays(14)))
-                .AsNoTracking()
-                // filtering
-                .OrderByDescending(bid => bid.Id)
-                .Select(b => new
-                {
-                    b.Auction.Uuid,
-                    b.Auction.End,
-                    b.Auction.Tag,
-                    b.Auction.Tier,
-                    b.Amount,
-                    Enchants = b.Auction.Enchantments,
-                    Nbt = b.Auction.NBTLookup
-                }).GroupBy(b => b.Uuid)
-                .Select(bid => new BidQuery(
-                    bid.Key,
-                    bid.Max(b => b.Amount),
-                    bid.Max(b => b.Amount),
-                    bid.Max(b => b.End),
-                    bid.First().Tag,
-                    bid.First().Tier,
-                    bid.OrderByDescending(b => b.Amount).First().Nbt.ToArray(),
-                    bid.First().Enchants
-                ))
-                //.ThenInclude (b => b.Auction)
-                .ToListAsync().ConfigureAwait(false);
-
-            var flipStats = (await flipTracking.TrackerBatchFlipsPostAsync(playerBids.Select(b => AuctionService.Instance.GetId(b.Key)).ToList()))
-                    ?.GroupBy(t => t.AuctionId)
-                    ?.ToDictionary(t => t.Key, v => v.AsEnumerable());
-            var flips = playerBids.Where(a => SalesUidLookup.Contains(a.Nbt.Where(b => b.KeyId == uidKey).FirstOrDefault().Value)).Select(b =>
-            {
-
-                return ToFlipDetails(b, uidKey, sells, flipStats);
-
-            }).OrderByDescending(f => f.Profit).ToArray();
-
-            return new FlipSumary()
-            {
-                Flips = flips,
-                TotalProfit = flips.Sum(r => r.Profit)
-            };
-
         }
 
         private void SaveProfitToLeaderboard(string uuid, long totalProfit)
