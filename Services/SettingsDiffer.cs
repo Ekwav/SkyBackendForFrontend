@@ -178,6 +178,7 @@ public class SettingsDiffer
         public List<ListEntry> WhitelistAdded { get; set; } = [];
         public Dictionary<string, ListEntry> WhitelistChanged { get; set; } = [];
         public List<ListEntry> WhitelistRemoved { get; set; } = [];
+        public System.DateTime CreatedAt { get; set; } = System.DateTime.UtcNow;
 
         public int GetDiffCount()
         {
