@@ -375,13 +375,13 @@ namespace Coflnet.Sky.Commands.Shared
 
             if (flip.Auction.Context?.TryGetValue("pre-api", out preApi) ?? true)
             {
-                var waitTime = flip.Auction.Start - DateTime.UtcNow + TimeSpan.FromSeconds(20);
+                var waitTime = flip.Auction.Start - DateTime.UtcNow + TimeSpan.FromSeconds(20.5);
                 if (waitTime > TimeSpan.Zero)
                     await Task.Delay(waitTime).ConfigureAwait(false);
             }
             if (minAccountTier >= AccountTier.PREMIUM_PLUS)
-                await Task.Delay(800).ConfigureAwait(false);
-            await Task.Delay(200).ConfigureAwait(false); // the whole system got upgraded from prem+ money so this artificially slows down premium
+                await Task.Delay(900).ConfigureAwait(false);
+            await Task.Delay(100).ConfigureAwait(false); // the whole system got upgraded from prem+ money so this artificially slows down premium
 
             foreach (var item in Subs)
             {
