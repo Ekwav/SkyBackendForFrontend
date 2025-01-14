@@ -380,7 +380,8 @@ namespace Coflnet.Sky.Commands.Shared
                     await Task.Delay(waitTime).ConfigureAwait(false);
             }
             if (minAccountTier >= AccountTier.PREMIUM_PLUS)
-                await Task.Delay(1000).ConfigureAwait(false);
+                await Task.Delay(800).ConfigureAwait(false);
+            await Task.Delay(200).ConfigureAwait(false); // the whole system got upgraded from prem+ money so this artificially slows down premium
 
             foreach (var item in Subs)
             {
