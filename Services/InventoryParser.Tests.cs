@@ -4,6 +4,7 @@ using System.Linq;
 using Coflnet.Sky.Core;
 using FluentAssertions;
 using MessagePack;
+using Microsoft.AspNetCore.JsonPatch.Internal;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -385,6 +386,124 @@ public class InventoryParserTests
   "displayName": "Head",
   "stackSize": 64,
   "slot": 11
+},
+{
+    "type": 397,
+    "count": 1,
+    "metadata": 3,
+    "nbt": {
+        "type": "compound",
+        "name": "",
+        "value": {
+            "HideFlags": {
+                "type": "int",
+                "value": 254
+            },
+            "SkullOwner": {
+                "type": "compound",
+                "value": {
+                    "Id": {
+                        "type": "string",
+                        "value": "949f3bb5-f8a7-301e-91f8-a19bc35d59f4"
+                    },
+                    "hypixelPopulated": {
+                        "type": "byte",
+                        "value": 1
+                    },
+                    "Properties": {
+                        "type": "compound",
+                        "value": {
+                            "textures": {
+                                "type": "list",
+                                "value": {
+                                    "type": "compound",
+                                    "value": [
+                                        {
+                                            "Signature": {
+                                                "type": "string",
+                                                "value": "IZzSdvJDh05oZbk1zJ/+k9mCt/PCYbonXoo6uCJyaL+Ioepj1V/Ioah15C9qkagnftxSMaXZ+l1MBXkAeP6RFFZafQf4DEH2pQb2Ftg2ivDxom0jBiheS7PPPNRfv7LTPxaqyttL8CZqHi8C05HNrrmgL37x/hnBblcMY4iPaiFliZyxQnSc/7y7vijrk6oOREAHv+v6uIY270MxeJUH7puHv+K30baJZiXkm0kKVpTRYxxcEKznS+7dCG4lJpDlB8MtBMl1cMWjrmf+MWRUsvVBnjHdjbVSDKLa9w7ZQ4DfgrDWkB3jOIqS4DZzzz60KWFyQfy/RKrxwYs8vEndWhGURbKe1F446Qy35ZbLfZvKlx/Xe3Mgo7ws8IpTksUMMgnXwyZdqh05u3yLr/INzq985uURtvl0ASGQyYW0Wla2ipBwewCkcBPxSjcQvFXJTULO/a1XAM/iiSyUhpwGOrIxWY9enliKqps6isjIP6QDCzOTTZPi7XZNzal3CzPSIWtuMuxrQY1F9EKq2oyyisYPzZkD0HP8lWAigHKX3ssxA9ch61RrnKoWqytH/CaB65V9hjo+6J+CUpjBYSPLSJYuH76e5n8mLNQzjOTjPxegsKB+C1oqh6k2XE2Sz9lddS9cjKgBdXqlsAqSIly6ChvYUZcizoeMMbqqW4XxfwQ="
+                                            },
+                                            "Value": {
+                                                "type": "string",
+                                                "value": "ewogICJ0aW1lc3RhbXAiIDogMTYxMTIyNjQyNTg4MCwKICAicHJvZmlsZUlkIiA6ICIzYTNmNzhkZmExZjQ0OTllYjE5NjlmYzlkOTEwZGYwYyIsCiAgInByb2ZpbGVOYW1lIiA6ICJUaGVyb2Ryb2dvIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2QxNWFmYWQ1M2QxNzI2ZmFlODZiM2ZiMTFiYTAxZTUxMTEyYjEwNTVlOGU1YWY4YjdkZjg2ZWY5NTZmMWQ0YTEiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ=="
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "display": {
+                "type": "compound",
+                "value": {
+                    "Lore": {
+                        "type": "list",
+                        "value": {
+                            "type": "string",
+                            "value": [
+                                "8Combat Pet",
+                                "",
+                                "7Defense: a+0.5",
+                                "7Strength: c+0.5",
+                                "7Ferocity: a+0.05",
+                                "",
+                                "6Bacon Farmer",
+                                "77Pig minions work a0.3% 7faster while on",
+                                "7your island",
+                                "",
+                                "6Pork Master",
+                                "77Buffs the 6Pigman Sword 7by a0.4 c",
+                                "cDamage 7and a0.2 c Strength7.",
+                                "",
+                                "6Giant Slayer",
+                                "77Deal c+50% 7damage to monsters Level",
+                                "7a50+7 and c+75% 7damage to monsters",
+                                "7Level a100+7.",
+                                "",
+                                "7Progress to Level 2: e0%",
+                                "flm                         r e06/e660",
+                                "",
+                                "7eRight-click to add this pet to your",
+                                "epet menu!",
+                                "",
+                                "6lLEGENDARY"
+                            ]
+                        }
+                    },
+                    "Name": {
+                        "type": "string",
+                        "value": "7[Lvl 1] 6Pigman"
+                    }
+                }
+            },
+            "ExtraAttributes": {
+                "type": "compound",
+                "value": {
+                    "petInfo": {
+                        "type": "string",
+                        "value": "{\"type\":\"PIGMAN\",\"active\":false,\"exp\":0.0,\"tier\":\"LEGENDARY\",\"hideInfo\":false,\"candyUsed\":0,\"hideRightClick\":false,\"noMove\":false}"
+                    },
+                    "id": {
+                        "type": "string",
+                        "value": "PET"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "value": "9a8e20bd-12dd-46f1-8e4c-061b187bcba4"
+                    },
+                    "timestamp": {
+                        "type": "long",
+                        "value": [
+                            404,
+                            741927295
+                        ]
+                    }
+                }
+            }
+        }
+    }
 }
 ]}
 """;
@@ -394,9 +513,11 @@ public class InventoryParserTests
     {
         var parser = new InventoryParser();
         var serialized = MessagePackSerializer.Serialize(parser.Parse(petSample));
-        var item = MessagePackSerializer.Deserialize<List<SaveAuction>>(serialized).First();
+        var parsed = MessagePackSerializer.Deserialize<List<SaveAuction>>(serialized);
+        var item = parsed.First();
         Assert.That(Tier.LEGENDARY, Is.EqualTo(item.Tier));
         Assert.That(new DateTime(2023, 3, 29), Is.EqualTo(item.ItemCreatedAt.Date));
+        parsed.Last().Tier.Should().Be(Tier.COMMON);
     }
 
 

@@ -299,9 +299,11 @@ namespace Coflnet.Sky.Commands.Shared
                     TargetPrice = flip.MedianPrice
                 });
             }
+            activity.Log("sending to prem+");
             await NotifyAll(flip, SuperSubs);
             await Task.Delay(1000);
             await NotifyAll(flip, Subs);
+            activity.Log("sheduling for starter");
             PrepareSlow(flip);
         }
 
