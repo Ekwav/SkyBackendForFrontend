@@ -517,7 +517,7 @@ public class InventoryParserTests
         var item = parsed.First();
         Assert.That(Tier.LEGENDARY, Is.EqualTo(item.Tier));
         Assert.That(new DateTime(2023, 3, 29), Is.EqualTo(item.ItemCreatedAt.Date));
-        parsed.Last().Tier.Should().Be(Tier.COMMON);
+        parsed.Last().Tier.Should().Be(Tier.LEGENDARY);
     }
 
 

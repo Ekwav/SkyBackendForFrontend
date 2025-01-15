@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Coflnet.Sky.Commands.Shared;
@@ -15,5 +17,16 @@ public class AverageTimeToSellTests
     {
         var filter = new AverageTimeToSellDetailedFlipFilter();
         Assert.That(filter.GetExpression(null, input).Compile()(new FlipInstance() { Volume = volume }), Is.EqualTo(expected));
+    }
+
+    [TestCase("<1h", 1, true)]
+    [TestCase("<1h", 61, false)]
+    [TestCase("1h-2h", 61, true)]
+    [TestCase("1m-12m", 9, true)]
+    public void ActualTimeToSell(string input, float time, bool expected)
+    {
+        var filter = new AverageTimeToSellDetailedFlipFilter();
+        var flip = new FlipInstance() { Context = new Dictionary<string, string> { { "minToSell", time.ToString() } } };
+        filter.GetExpression(null, input).Compile()(flip).Should().Be(expected);
     }
 }

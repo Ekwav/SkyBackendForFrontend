@@ -17,14 +17,14 @@ public class AverageTimeToSellDetailedFlipFilter : VolumeDetailedFlipFilter
     public override Expression<Func<FlipInstance, bool>> GetExpression(FilterContext filters, string content)
     {
         // replace each number group in content with Convert
-        if(content.Contains('-'))
+        if (content.Contains('-'))
         {
             // switch positions of the two numbers
             content = string.Join('-', content.Split('-').Reverse());
-        } 
-        if(content.StartsWith('<'))
-            content = content.Replace('<','>');
-        else if(content.StartsWith('>'))
+        }
+        if (content.StartsWith('<'))
+            content = content.Replace('<', '>');
+        else if (content.StartsWith('>'))
             content = content.Replace('>', '<');
         var convertedString = System.Text.RegularExpressions.Regex.Replace(content, @"[\dmhdw]+", (m) => ConvertToDay(m.Value));
         Console.WriteLine(convertedString);
@@ -39,19 +39,29 @@ public class AverageTimeToSellDetailedFlipFilter : VolumeDetailedFlipFilter
         switch (unit)
         {
             case 'm':
-                return (1/(number / 30)).ToString(CultureInfo.InvariantCulture);
+                return (1 / (number / 60 / 24)).ToString(CultureInfo.InvariantCulture);
             case 'h':
-                return (1/(number / 24)).ToString(CultureInfo.InvariantCulture);
+                return (1 / (number / 24)).ToString(CultureInfo.InvariantCulture);
             case 'd':
                 return number.ToString(CultureInfo.InvariantCulture);
             case 'w':
-                return (1/(number * 7)).ToString(CultureInfo.InvariantCulture);
+                return (1 / (number * 7)).ToString(CultureInfo.InvariantCulture);
         }
         throw new CoflnetException("invalid_unit", $"The last character needs to be one of m,h,d,w (minutes, hours, days, weeks)");
     }
 
     protected override Expression<Func<FlipInstance, double>> GetSelector(FilterContext filters)
     {
-        return (f) => f.Volume;
+        return (f) => (double)GetVolume(f);
+    }
+
+    private static float GetVolume(FlipInstance f)
+    {
+        if (f.Context?.TryGetValue("minToSell", out var minToSell) ?? false)
+        {
+            var minutes = float.Parse(minToSell);
+            return 1 / (minutes / 60 / 24);
+        }
+        return f.Volume;
     }
 }
