@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Coflnet.Sky.Core;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -28,5 +29,14 @@ public class AverageTimeToSellTests
         var filter = new AverageTimeToSellDetailedFlipFilter();
         var flip = new FlipInstance() { Context = new Dictionary<string, string> { { "minToSell", time.ToString() } } };
         filter.GetExpression(null, input).Compile()(flip).Should().Be(expected);
+    }
+
+    [TestCase("1x")]
+    [TestCase("1")]
+    [TestCase("111")]
+    public void ErrorMessage(string input)
+    {
+        var filter = new AverageTimeToSellDetailedFlipFilter();
+        Assert.Throws<CoflnetException>(() => filter.GetExpression(null, input));
     }
 }

@@ -26,7 +26,7 @@ public class AverageTimeToSellDetailedFlipFilter : VolumeDetailedFlipFilter
             content = content.Replace('<', '>');
         else if (content.StartsWith('>'))
             content = content.Replace('>', '<');
-        var convertedString = System.Text.RegularExpressions.Regex.Replace(content, @"[\dmhdw]+", (m) => ConvertToDay(m.Value));
+        var convertedString = System.Text.RegularExpressions.Regex.Replace(content, @"([\dmhdw]+[^-]?)", (m) => ConvertToDay(m.Value));
         Console.WriteLine(convertedString);
         return base.GetExpression(filters, convertedString);
     }
@@ -34,6 +34,10 @@ public class AverageTimeToSellDetailedFlipFilter : VolumeDetailedFlipFilter
     private string ConvertToDay(string content)
     {
         // timespan fromat is 1d, 2h, 3m, 4w
+        if(content.Length == 1)
+        {
+            return new CoflnetException("invalid_unit", $"{content} is not enough. The last character needs to be one of m,h,d,w (minutes, hours, days, weeks)").ToString();
+        }
         var number = double.Parse(content.Substring(0, content.Length - 1));
         var unit = content[content.Length - 1];
         switch (unit)
