@@ -30,7 +30,8 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         { "RUNE_BARK_ICE_SKATES", 0.5},
         { "RUNE_SPELLBOUND", 0.5},
         { "RUNE_GRAND_FREEZING", 0.5},
-        { "RUNE_PRIMAL_FEAR", 0.5}
+        { "RUNE_PRIMAL_FEAR", 0.5},
+        { "cleanItem", 1}
     };
     public CraftCostWeightDetailedFlipFilter()
     {
@@ -55,7 +56,10 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             throw new CoflnetException("missing_argument", "No default multiplier provided, use default:0.9 to disable");
         foreach (var item in DefaultWeights)
         {
-            multipliers.TryAdd(item.Key, Math.Min(item.Value, defaultMultiplier));
+            var toUse = Math.Min(item.Value, defaultMultiplier);
+            if(item.Key == "cleanItem")
+                toUse = 1;
+            multipliers.TryAdd(item.Key, toUse);
         }
 
         filters.filters.TryGetValue("MinProfit", out var minprofitString);
@@ -79,8 +83,8 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
             {
                 lookup.TryAdd(item.Type.ToString(), item.Level.ToString());
             }
-        var valueSum = breakdown.Select(b => GetMultiplier(multipliers, defaultMultiplier, b, lookup) * b.Value).Sum()
-            + long.Parse(f.Context["cleanCost"]);
+        breakdown.TryAdd("cleanItem", long.Parse(f.Context["cleanCost"]));
+        var valueSum = breakdown.Select(b => GetMultiplier(multipliers, defaultMultiplier, b, lookup) * b.Value).Sum();
         var targetMinusTax = valueSum * 0.98;
         var profit = targetMinusTax - f.Auction.StartingBid;
         if (minProfit > profit)
@@ -128,7 +132,7 @@ public class CraftCostWeightDetailedFlipFilter : NumberDetailedFlipFilter
         }
     }
 
-    private readonly HashSet<string> validModifiers = ["default",
+    private readonly HashSet<string> validModifiers = ["default", "cleanItem",
     "AMBER_0",
     "AMBER_1",
     "AMETHYST_0",

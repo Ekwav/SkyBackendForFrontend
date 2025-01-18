@@ -15,6 +15,7 @@ public class CraftCostWeightTests
     [TestCase("2", "art_of_war_count:0.5,art_of_war_count.1:1.5,default:0.8", true, 53428000)]
     [TestCase("2", "rarity_upgrades:0.1,default:0", true, 10820000)]
     [TestCase("2", "default:0.1", true, 15018500)]
+    [TestCase("2", "default:0.1,cleanItem:0.9", true, 14018500)]
     [TestCase("4100000", "default:0", false, 0)]
     public void Test(string minProfit, string filterVal, bool expected, int target)
     {
