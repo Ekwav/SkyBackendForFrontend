@@ -270,7 +270,6 @@ public class InventoryParser
         if (!attributesWithoutEnchantments.TryGetValue("timestamp", out var timestamp))
             return;
         var stringDate = timestamp.ToString();
-        Console.WriteLine(stringDate);
         if (long.TryParse(stringDate, out var milliseconds))
         {
             auction.ItemCreatedAt = DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).DateTime;
