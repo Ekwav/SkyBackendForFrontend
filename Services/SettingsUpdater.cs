@@ -78,6 +78,10 @@ namespace Coflnet.Sky.Commands.Shared
 
         public async Task<object> Update(IFlipConnection con, string key, string value)
         {
+            if (key.Equals("blockexport", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"Blockexport {value} on {con.UserId}");
+            }
             if (key == "blacklist")
                 con.Settings.BlackList = GetOrderedFilters(value);
             else if (key == "whitelist")
@@ -87,7 +91,7 @@ namespace Coflnet.Sky.Commands.Shared
 
             else if (!options.TryGetValue(key, out SettingDoc doc))
             {
-                var closest = options.Keys.Where(k=>!options[k].Hide)
+                var closest = options.Keys.Where(k => !options[k].Hide)
                     .OrderBy(k => Fastenshtein.Levenshtein.Distance(k.ToLower(), key.ToLower())).First();
                 throw new UnknownSettingException(key, closest);
             }
