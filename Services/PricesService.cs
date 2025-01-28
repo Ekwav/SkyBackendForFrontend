@@ -62,6 +62,8 @@ namespace Coflnet.Sky.Commands.Shared
                 if (val == null)
                     return null;
                 if (val.Count() == 0)
+                    val = await bazaarClient.ApiBazaarItemIdHistoryGetAsync(itemTag, DateTime.UtcNow - TimeSpan.FromDays(0.9), DateTime.UtcNow);
+                if (val.Count() == 0)
                     return new();
                 return new PriceSumary()
                 {
