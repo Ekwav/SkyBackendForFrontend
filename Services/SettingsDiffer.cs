@@ -17,6 +17,10 @@ public class SettingsDiffer
     public static SettingsDiff GetDifferences(FlipSettings oldSettings, FlipSettings newSettings)
     {
         var differences = new SettingsDiff();
+        if (oldSettings == null || newSettings == null)
+        {
+            return differences;
+        }
         // iterate over all properties of settings
         AssignSetCommandsDiff(oldSettings, newSettings, differences);
         AssignSetCommandsDiff(oldSettings.ModSettings, newSettings.ModSettings, differences, "mod");
