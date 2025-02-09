@@ -96,7 +96,7 @@ namespace Coflnet.Sky.Commands.Shared
         {
             var itemId = GetItemId(itemTag);
             var select = context.Auctions
-                        .Where(auction => auction.ItemId == itemId)
+                        .Where(auction => auction.ItemId == itemId && auction.Bin)
                         .Where(auction => auction.End > DateTime.Now)
                         .Where(auction => auction.HighestBidAmount == 0);
             if (filters != null && filters.Count > 0)
