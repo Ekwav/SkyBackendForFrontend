@@ -5,6 +5,7 @@ using Coflnet.Sky.Commands.Tests;
 using System.Threading.Tasks;
 using Coflnet.Sky.Filter;
 using System.Linq;
+using FluentAssertions;
 
 namespace Coflnet.Sky.Commands.Shared
 {
@@ -31,6 +32,7 @@ namespace Coflnet.Sky.Commands.Shared
                     },
                     Tag = SwordTag
                 },
+                Volume = 1,
                 MedianPrice = 1000,
                 Finder = LowPricedAuction.FinderType.SNIPER
             };
@@ -193,7 +195,7 @@ namespace Coflnet.Sky.Commands.Shared
         [Test]
         public void CreateListMatcherWithNull()
         {
-            var matcher = new FlipSettings.ListMatcher(null, null, System.Threading.CancellationToken.None);
+            var matcher = new FlipSettings.ListMatcher(null, null, new(), System.Threading.CancellationToken.None);
             Assert.That(!matcher.IsMatch(flipA).Item1);
         }
         [Test]
@@ -216,10 +218,32 @@ namespace Coflnet.Sky.Commands.Shared
                     {
                     }
                 },
-            }, null, System.Threading.CancellationToken.None);
+            }, null, new(), System.Threading.CancellationToken.None);
             Assert.That(1, Is.EqualTo(matcher.FullList.Count));
             Assert.That(1, Is.EqualTo(matcher.FullList[0].Tags.Count));
             Assert.That(2, Is.EqualTo(matcher.FullList[0].filter.Count));
+        }
+
+        [TestCase(">{{MIN_PROFIT}}*0.5")]
+        [TestCase("{{MIN_PROFIT}}*0.5-{{MIN_PROFIT}}*1.5")]
+        [TestCase("{{MIN_PROFIT}}*0.784")]
+        public void Variables(string expression)
+        {
+            var settings = new FlipSettings()
+            {
+                MinProfit = 1_000_000,
+                WhiteList = [
+                    new ListEntry(){ItemTag = SwordTag, filter = new System.Collections.Generic.Dictionary<string, string>()
+                        {
+                            { "Profit",expression}
+                        }}
+                ],
+                AllowedFinders = LowPricedAuction.FinderType.SNIPER
+            };
+            flipA.Target = 800_000; // lower than 1m 
+            var matches = settings.MatchesSettings(flipA);
+            matches.Item1.Should().BeTrue();
+            matches.Item2.Should().Be("whitelist matched filter for item");
         }
 
         [Test]

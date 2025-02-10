@@ -212,16 +212,16 @@ namespace Coflnet.Sky.Commands.Shared
             Activity.Current.Log("initializing filter matcher");
             var token = filterCompileCancel.Token;
             if (ForcedBlackListMatcher == null && !token.IsCancellationRequested)
-                ForcedBlackListMatcher = new ListMatcher(GetForceBlacklist(), PlayerInfo, token);
+                ForcedBlackListMatcher = new ListMatcher(GetForceBlacklist(), PlayerInfo, this, token);
             Activity.Current.Log("initialized force blacklist");
             if (WhiteListMatcher == null && !token.IsCancellationRequested)
-                WhiteListMatcher = new ListMatcher(WhiteList?.Except(GetAfterMainWhitelist()).ToList(), PlayerInfo, token);
+                WhiteListMatcher = new ListMatcher(WhiteList?.Except(GetAfterMainWhitelist()).ToList(), PlayerInfo, this, token);
             Activity.Current.Log("initialized whitelist matcher");
             if (AfterMainWhiteListMatcher == null && !token.IsCancellationRequested)
-                AfterMainWhiteListMatcher = new ListMatcher(GetAfterMainWhitelist(), PlayerInfo, token);
+                AfterMainWhiteListMatcher = new ListMatcher(GetAfterMainWhitelist(), PlayerInfo, this, token);
             Activity.Current.Log("initialized after main whitelist matcher");
             if (BlackListMatcher == null && !token.IsCancellationRequested)
-                BlackListMatcher = new ListMatcher(BlackList?.Except(GetForceBlacklist()).ToList(), PlayerInfo, token);
+                BlackListMatcher = new ListMatcher(BlackList?.Except(GetForceBlacklist()).ToList(), PlayerInfo, this, token);
             Activity.Current.Log("initialized blacklist matcher");
         }
 
@@ -369,11 +369,22 @@ namespace Coflnet.Sky.Commands.Shared
                             .Aggregate((a, b) => a + b) ?? "";
             }
 
-            public ListMatcher(List<ListEntry> BlackList, IPlayerInfo playerInfo, CancellationToken token)
+            public ListMatcher(List<ListEntry> BlackList, IPlayerInfo playerInfo, FlipSettings settings, CancellationToken token)
             {
                 if (BlackList == null || BlackList.Count == 0)
                     return;
                 this.FullList = new(BlackList.Select(b => b.Clone()));
+                foreach (var item in FullList.ToList())
+                {
+                    if (item.filter == null || item.filter.Count == 0)
+                        continue;
+                    foreach (var filter in item.filter)
+                    {
+                        if (!filter.Value.Contains("{{"))
+                            continue;
+                        item.filter[filter.Key] = ExpressionParser.Evaluate(filter.Value, settings);
+                    }
+                }
                 ConcurrentDictionary<string, List<ListEntry>> forTags = ExtractFiltersForTags();
                 foreach (var item in FullList.ToList())
                 {
@@ -559,3 +570,5 @@ namespace Coflnet.Sky.Commands.Shared
     }
 
 }
+
+
