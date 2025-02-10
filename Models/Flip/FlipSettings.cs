@@ -544,7 +544,7 @@ namespace Coflnet.Sky.Commands.Shared
                 if (flip.Auction.FlatenedNBT.ContainsKey("color") && Matchers.TryGetValue("color", out matcher) && matcher(flip))
                     return (true, "matched color filter");
                 if (flip.Auction.Tag != null && flip.Auction.Tag.StartsWith("PET_") && Matchers.TryGetValue("pets", out matcher) && matcher(flip))
-                    return (true, "matched color filter");
+                    return (true, "matched pet filter");
                 if (Matchers.TryGetValue(string.Empty, out matcher) && matcher(flip))
                     return (true, "matched general filter");
                 /*foreach (var item in RemainingFilters)
